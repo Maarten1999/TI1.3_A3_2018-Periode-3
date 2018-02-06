@@ -1,4 +1,4 @@
-package Agenda;
+package agenda.data;
 
 public class Stage {
     String name;

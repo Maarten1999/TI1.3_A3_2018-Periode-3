@@ -1,7 +1,9 @@
-package Agenda;
+package agenda;
 
-public class Main {
+import agenda.gui.FestivalFrame;
+
+public class Main{
     public static void main(String[] args){
-
+        new FestivalFrame();
     }
 }
