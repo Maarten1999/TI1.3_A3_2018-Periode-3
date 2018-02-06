@@ -1,4 +1,4 @@
-package Agenda;
+package agenda.data;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package Agenda;
+package agenda.data;
 
 import java.time.LocalTime;
 
