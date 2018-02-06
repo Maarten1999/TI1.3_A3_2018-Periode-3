@@ -11,7 +11,7 @@ public class Schedule {
     private String name;
 
     public Schedule(int day, int month, int year, String name) {
-        date = LocalDate.of(year,month,day);
+        date = LocalDate.of(year, month, day);
         this.name = name;
         artists = new ArrayList<>();
         stages = new ArrayList<>();
@@ -38,15 +38,15 @@ public class Schedule {
         return name;
     }
 
-    public void addArtist(Artist artist){
+    public void addArtist(Artist artist) {
         artists.add(artist);
     }
 
-    public void addStage(Stage stage){
+    public void addStage(Stage stage) {
         stages.add(stage);
     }
 
-    public void addPerformace(Performance performance){
+    public void addPerformace(Performance performance) {
         performances.add(performance);
     }
 }
