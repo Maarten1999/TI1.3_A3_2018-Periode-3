@@ -24,8 +24,4 @@ public class Stage {
     public void setCapicity(int capicity) {
         this.capacity = capicity;
     }
-
-    public boolean equals(Object a){
-        return a == this;
-    }
 }

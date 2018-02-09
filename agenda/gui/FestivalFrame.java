@@ -1,29 +1,40 @@
 package agenda.gui;
 
-import agenda.gui.schedulegraphics.ScheduleGraphics;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class FestivalFrame extends JFrame {
 
     public FestivalFrame() {
+        // Window settings
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(1291, 720));
+        setMinimumSize(new Dimension(1280, 720));
         setResizable(false);
         setLocationRelativeTo(null);
 
-        JMenuBar menu = new JMenuBar();
-        menu.add(new JMenu("Menu1"));
-        setJMenuBar(menu);
+        // Menu bar
+        addMenuBar();
 
+        // Tabs
         JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("test1", new JTextArea("hallo1"));
-        tabs.add(new ScheduleGraphics(null));
-        tabs.addTab("test2", new JTextArea("hallo2"));
-        tabs.addTab("test3", new JTextArea("hallo3"));
+        tabs.addTab("Schedule", new ScheduleTab());
+        tabs.addTab("Performances", new PerformanceTab());
+        tabs.addTab("Artists", new ArtistTab());
         add(tabs);
 
         setVisible(true);
+    }
+
+    private void addMenuBar() {
+        JMenuBar menu = new JMenuBar();
+        JMenu file = new JMenu("File");
+        file.add("Open festival");
+        file.add("Save festival");
+        menu.add(file);
+
+        JMenu about = new JMenu("About");
+        about.add("About this version");
+        menu.add(about);
+        setJMenuBar(menu);
     }
 }

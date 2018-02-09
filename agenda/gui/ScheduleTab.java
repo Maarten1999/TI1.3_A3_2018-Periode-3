@@ -1,4 +1,6 @@
 package agenda.gui;
 
-public class ScheduleTab {
+import javax.swing.*;
+
+public class ScheduleTab extends JPanel{
 }
