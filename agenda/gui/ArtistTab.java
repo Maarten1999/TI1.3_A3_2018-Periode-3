@@ -1,9 +1,9 @@
 package agenda.gui;
 
 import agenda.data.Artist;
+import agenda.data.Schedule;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class ArtistTab extends JPanel {
@@ -12,7 +12,8 @@ public class ArtistTab extends JPanel {
     private ArtistModel model;
     private JScrollPane scroller;
 
-    public ArtistTab() {
+    public ArtistTab(Schedule schedule) {
+        model = new ArtistModel(schedule.getArtists());
         setLayout(new BorderLayout());
         initTable();
         initButtons();
@@ -20,15 +21,11 @@ public class ArtistTab extends JPanel {
 
     private void initTable() {
         table = new JTable();
-        model = new ArtistModel();
-        model.add(new Artist("Justin Bieber", -100));
-        for (int i = 0; i <= 10; i++) {
-            model.add(new Artist("Bob Marley", i));
-        }
         table.getTableHeader().setReorderingAllowed(false);
         scroller = new JScrollPane(table);
         table.setModel(model);
         add(scroller, BorderLayout.CENTER);
+        table.setAutoCreateRowSorter(true);
     }
 
     private void initButtons() {
@@ -54,10 +51,8 @@ public class ArtistTab extends JPanel {
                 }
             }
         });
-        JButton saveButton = new JButton("Save");
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
-        buttonPanel.add(saveButton);
         add(buttonPanel, BorderLayout.SOUTH);
     }
 }

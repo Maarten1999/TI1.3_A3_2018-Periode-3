@@ -15,6 +15,9 @@ public class Performance {
         this.endTime = endTime;
     }
 
+    public Performance() {
+    }
+
     public Artist getArtist() {
         return artist;
     }

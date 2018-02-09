@@ -9,18 +9,23 @@ public class ArtistModel extends AbstractTableModel {
 
     private ArrayList<Artist> artists;
 
-    public ArtistModel() {
-        artists =  new ArrayList<>();
+    public ArtistModel(ArrayList<Artist> artists) {
+        this.artists = artists;
     }
 
-    public void add(Artist artist){
+    public void add(Artist artist) {
         artists.add(artist);
-        fireTableRowsInserted(artists.size()-1, artists.size()-1);
+        fireTableRowsInserted(artists.size() - 1, artists.size() - 1);
     }
 
-    public void remove(int index){
+    public void remove(int index) {
         artists.remove(index);
-        fireTableRowsDeleted(artists.size()-1, artists.size()-1);
+        fireTableRowsDeleted(artists.size() - 1, artists.size() - 1);
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return true;
     }
 
     @Override
@@ -35,7 +40,7 @@ public class ArtistModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        if(column ==0){
+        if (column == 0) {
             return "Name";
         }
         return "popularity";
@@ -44,9 +49,21 @@ public class ArtistModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Artist artist = artists.get(rowIndex);
-        if(columnIndex ==0){
+        if (columnIndex == 0) {
             return artist.getName();
         }
         return artist.getPopularity();
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        Artist artist = artists.get(rowIndex);
+        if (columnIndex == 0) {
+            artist.setName((String) aValue);
+        } else {
+            artist.setPopularity(Integer.parseInt((String) aValue));
+        }
+        artists.set(rowIndex, artist);
+        fireTableCellUpdated(rowIndex, columnIndex);
     }
 }
