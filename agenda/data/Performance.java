@@ -3,12 +3,15 @@ package agenda.data;
 import java.time.LocalTime;
 
 public class Performance {
+
+    private String name;
     private Artist artist;
     private Stage stage;
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public Performance(Artist artist, Stage stage, LocalTime startTime, LocalTime endTime) {
+    public Performance(String name, Artist artist, Stage stage, LocalTime startTime, LocalTime endTime) {
+        this.name = name;
         this.artist = artist;
         this.stage = stage;
         this.startTime = startTime;
@@ -16,6 +19,11 @@ public class Performance {
     }
 
     public Performance() {
+    }
+
+
+    public String getName() {
+        return name;
     }
 
     public Artist getArtist() {

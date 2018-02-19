@@ -33,7 +33,7 @@ public class FestivalFrame extends JFrame {
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
-        ScheduleTab scheduleTab = new ScheduleTab();
+        ScheduleTab scheduleTab = new ScheduleTab(this.schedule);
         tabs.addTab("Schedule", scheduleTab);
         PerformanceTab performanceTab = new PerformanceTab(this.schedule);
         tabs.addTab("Performances", performanceTab);
