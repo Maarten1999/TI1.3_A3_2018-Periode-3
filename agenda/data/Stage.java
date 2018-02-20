@@ -24,4 +24,9 @@ public class Stage {
     public void setCapicity(int capicity) {
         this.capacity = capicity;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

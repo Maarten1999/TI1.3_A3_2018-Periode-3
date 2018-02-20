@@ -7,10 +7,13 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
-public class FestivalFrame extends JFrame {
+public class FestivalFrame extends JFrame implements WindowFocusListener {
 
     private Schedule schedule;
+    private final ScheduleTab scheduleTab;
 
     public FestivalFrame() {
         //Make test schedule
@@ -25,6 +28,7 @@ public class FestivalFrame extends JFrame {
         setMinimumSize(new Dimension(1280, 720));
         setResizable(false);
         setLocationRelativeTo(null);
+        addWindowFocusListener(this);
 //        ImageIcon img = new ImageIcon(getClass().getResource("/icon.png"));
 //        setIconImage(img.getImage());
 
@@ -33,7 +37,7 @@ public class FestivalFrame extends JFrame {
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
-        ScheduleTab scheduleTab = new ScheduleTab(this.schedule);
+        scheduleTab = new ScheduleTab(this.schedule);
         tabs.addTab("Schedule", scheduleTab);
         PerformanceTab performanceTab = new PerformanceTab(this.schedule);
         tabs.addTab("Performances", performanceTab);
@@ -42,8 +46,13 @@ public class FestivalFrame extends JFrame {
         tabs.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                if(tabs.getSelectedIndex() == 1) {
-                    performanceTab.changeToTab();
+                switch (tabs.getSelectedIndex()) {
+                    case 0:
+                        scheduleTab.refresh();
+                        break;
+                    case 1:
+                        performanceTab.refresh();
+                        break;
                 }
             }
         });
@@ -63,4 +72,12 @@ public class FestivalFrame extends JFrame {
         menu.add(about);
         setJMenuBar(menu);
     }
+
+    @Override
+    public void windowGainedFocus(WindowEvent e) {
+        scheduleTab.refresh();
+    }
+
+    @Override
+    public void windowLostFocus(WindowEvent e) {}
 }

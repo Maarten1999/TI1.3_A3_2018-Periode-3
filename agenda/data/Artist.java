@@ -9,6 +9,11 @@ public class Artist {
         this.popularity = popularity;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public String getName() {
         return name;
     }

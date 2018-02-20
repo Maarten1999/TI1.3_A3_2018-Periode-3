@@ -50,7 +50,7 @@ public class PerformanceTab extends JTable {
         add(scroller, BorderLayout.CENTER);
     }
 
-    public void changeToTab() {
+    public void refresh() {
         comboBoxRenderer.removeAllItems();
         ArrayList<Artist> artists = this.schedule.getArtists();
         for(Artist artist : artists) {

@@ -57,4 +57,8 @@ public class Performance {
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

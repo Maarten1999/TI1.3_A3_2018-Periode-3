@@ -24,10 +24,25 @@ public class ScheduleTab extends JPanel implements MouseListener {
     public ScheduleTab(Schedule schedule) {
         this.schedule = schedule;
         setLayout(new BorderLayout());
+        JPanel panel = new JPanel();
+        //New button
         JButton newButton = new JButton("New");
-        newButton.addActionListener(e -> System.out.println("iets"));
+        newButton.addActionListener(e -> {
+            new PopupWindow(this.schedule);
+        });
+
+        //Previous button
+        JButton previousButton = new JButton("Previous");
+
+        //Next button
+        JButton nextButton = new JButton("Next");
+
         addMouseListener(this);
-        add(newButton, BorderLayout.SOUTH);
+        add(panel, BorderLayout.SOUTH);
+        panel.add(newButton);
+        panel.add(previousButton);
+        panel.add(nextButton);
+
         addTestObjects();
         initBoxes();
     }
@@ -39,7 +54,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
         this.schedule.addStage(new Stage("Stage 3", 500));
         this.schedule.addPerformace(new Performance("Performance Name",
                 this.schedule.getArtists().get(0),
-                this.schedule.getStages().get(0),
+                this.schedule.getStages().get(1),
                 LocalTime.of(14, 40),
                 LocalTime.of(20, 20)));
     }
@@ -83,7 +98,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
     public static final int STAGE_BAR_WIDTH = 200;
 
     public static final int TIMELINE_BAR_WIDTH = 100;
-    public static final int TIMELINE_BAR_HEIGHT = 35;
+    public static final int TIMELINE_BAR_HEIGHT = 34;
     public static final int START_HOUR = 8;
     public static final int END_HOUR = 23;
 
@@ -148,6 +163,11 @@ public class ScheduleTab extends JPanel implements MouseListener {
             item.translate(x, y);
         stringShape = item.createTransformedShape(stringShape);
         g2d.fill(stringShape);
+    }
+
+    public void refresh() {
+        initBoxes();
+        repaint();
     }
 
     @Override
