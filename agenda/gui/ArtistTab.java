@@ -1,19 +1,20 @@
 package agenda.gui;
 
 import agenda.data.Artist;
-import agenda.data.Schedule;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ArtistTab extends JPanel {
 
+    private FestivalFrame frame;
     private JTable table;
     private ArtistModel model;
     private JScrollPane scroller;
 
-    public ArtistTab(Schedule schedule) {
-        model = new ArtistModel(schedule.getArtists());
+    public ArtistTab(FestivalFrame frame) {
+        this.frame = frame;
+        model = new ArtistModel(this.frame);
         setLayout(new BorderLayout());
         initTable();
         initButtons();

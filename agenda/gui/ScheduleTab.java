@@ -18,13 +18,16 @@ import java.util.ArrayList;
 
 public class ScheduleTab extends JPanel implements MouseListener {
 
+    private FestivalFrame frame;
     private Schedule schedule;
     private ArrayList<PerformanceBox> performanceBoxes;
 
-    public ScheduleTab(Schedule schedule) {
-        this.schedule = schedule;
+    public ScheduleTab(FestivalFrame frame) {
+        this.frame = frame;
+        this.schedule = frame.getSchedule();
         setLayout(new BorderLayout());
         JPanel panel = new JPanel();
+
         //New button
         JButton newButton = new JButton("New");
         newButton.addActionListener(e -> {
@@ -52,6 +55,9 @@ public class ScheduleTab extends JPanel implements MouseListener {
         this.schedule.addStage(new Stage("Stage 1", 500));
         this.schedule.addStage(new Stage("Stage 2", 500));
         this.schedule.addStage(new Stage("Stage 3", 500));
+        this.schedule.addStage(new Stage("Stage 4", 500));
+        this.schedule.addStage(new Stage("Stage 5", 500));
+        this.schedule.addStage(new Stage("Stage 6", 500));
         this.schedule.addPerformace(new Performance("Performance Name",
                 this.schedule.getArtists().get(0),
                 this.schedule.getStages().get(1),
@@ -69,6 +75,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
 
     @Override
     protected void paintComponent(Graphics g) {
+        System.out.println("repaint");
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         RenderingHints rh = new RenderingHints(
@@ -95,7 +102,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
     public static Font font = new Font("Arial", Font.PLAIN, 12);
     private final Color BAR_COLOR = Color.LIGHT_GRAY;
     public static final int STAGE_BAR_HEIGHT = 50;
-    public static final int STAGE_BAR_WIDTH = 200;
+    public static final int STAGE_BAR_WIDTH = 195;
 
     public static final int TIMELINE_BAR_WIDTH = 100;
     public static final int TIMELINE_BAR_HEIGHT = 34;
@@ -166,6 +173,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
     }
 
     public void refresh() {
+        this.schedule = this.frame.getSchedule();
         initBoxes();
         repaint();
     }
@@ -203,8 +211,6 @@ class PerformanceBox {
     }
 
     public void drawBox(Graphics2D g2d, int index) {
-        System.out.println("draw");
-
         // Calculate x position
         int x = ScheduleTab.TIMELINE_BAR_WIDTH + ScheduleTab.STAGE_BAR_WIDTH * index;
 
@@ -238,7 +244,10 @@ class PerformanceBox {
         artistString = shorten(artistString);
         ScheduleTab.drawText(g2d, artistString, x + ScheduleTab.STAGE_BAR_WIDTH / 2, y + 40, true);
 
-        // Add more later...
+        String timeString = this.performance.getStartTime().toString().substring(0, 5) + " - " +
+                this.performance.getEndTime().toString().substring(0, 5);
+        timeString = shorten(timeString);
+        ScheduleTab.drawText(g2d, timeString, x + ScheduleTab.STAGE_BAR_WIDTH / 2, y + 60, true);
     }
 
     private String shorten(String string) {

@@ -9,6 +9,10 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class FestivalFrame extends JFrame implements WindowFocusListener {
 
@@ -37,23 +41,20 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
-        scheduleTab = new ScheduleTab(this.schedule);
+        scheduleTab = new ScheduleTab(this);
         tabs.addTab("Schedule", scheduleTab);
         PerformanceTab performanceTab = new PerformanceTab(this.schedule);
         tabs.addTab("Performances", performanceTab);
-        tabs.addTab("Artists", new ArtistTab(this.schedule));
+        tabs.addTab("Artists", new ArtistTab(this));
         add(tabs);
-        tabs.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                switch (tabs.getSelectedIndex()) {
-                    case 0:
-                        scheduleTab.refresh();
-                        break;
-                    case 1:
-                        performanceTab.refresh();
-                        break;
-                }
+        tabs.addChangeListener(e -> {
+            switch (tabs.getSelectedIndex()) {
+                case 0:
+                    scheduleTab.refresh();
+                    break;
+                case 1:
+                    performanceTab.refresh();
+                    break;
             }
         });
 
@@ -63,8 +64,30 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
     private void addMenuBar() {
         JMenuBar menu = new JMenuBar();
         JMenu file = new JMenu("File");
-        file.add("Open festival");
-        file.add("Save festival");
+        JMenuItem open = new JMenuItem("Open festival");
+        file.add(open);
+        open.addActionListener(e -> {
+            System.out.println("Open");
+            try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("./festival.ftv"))) {
+                this.schedule = (Schedule) inputStream.readObject();
+                this.scheduleTab.refresh();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            System.out.println(this.schedule.getPerformances().size());
+        });
+        JMenuItem save = new JMenuItem("Save festival");
+        file.add(save);
+        save.addActionListener(e -> {
+            System.out.println(this.schedule.getPerformances().size());
+            System.out.println("Saved");
+            try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./festival.ftv"))){
+                outputStream.writeObject(schedule);
+            }
+            catch(Exception exception){exception.printStackTrace();}
+            this.schedule = new Schedule(1, 1, 1, "New festival");
+            this.scheduleTab.refresh();
+        });
         menu.add(file);
 
         JMenu about = new JMenu("About");
@@ -80,4 +103,8 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
     @Override
     public void windowLostFocus(WindowEvent e) {}
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
 }

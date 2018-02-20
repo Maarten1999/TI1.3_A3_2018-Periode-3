@@ -1,8 +1,9 @@
 package agenda.data;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
-public class Performance {
+public class Performance implements Serializable {
 
     private String name;
     private Artist artist;

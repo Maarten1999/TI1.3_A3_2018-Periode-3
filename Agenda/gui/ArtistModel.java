@@ -1,16 +1,19 @@
 package agenda.gui;
 
 import agenda.data.Artist;
+import agenda.data.Performance;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
 public class ArtistModel extends AbstractTableModel {
 
+    private FestivalFrame frame;
     private ArrayList<Artist> artists;
 
-    public ArtistModel(ArrayList<Artist> artists) {
-        this.artists = artists;
+    public ArtistModel(FestivalFrame frame) {
+        this.frame = frame;
+        this.artists = this.frame.getSchedule().getArtists();
     }
 
     public void add(Artist artist) {
@@ -19,8 +22,16 @@ public class ArtistModel extends AbstractTableModel {
     }
 
     public void remove(int index) {
-        artists.remove(index);
-        fireTableRowsDeleted(artists.size() - 1, artists.size() - 1);
+        String artistName = this.artists.get(index).getName();
+        for (int i = 0; i < this.frame.getSchedule().getPerformances().size(); i++) {
+            if (this.frame.getSchedule().getPerformances().get(i).getArtist().getName().equals(artistName)) {
+                this.frame.getSchedule().getPerformances().remove(i);
+                i--;
+            }
+        }
+        this.frame.getSchedule().getArtists().remove(index);
+        fireTableRowsDeleted(this.frame.getSchedule().getArtists().size() - 1,
+                this.frame.getSchedule().getArtists().size() - 1);
     }
 
     @Override

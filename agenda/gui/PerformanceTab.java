@@ -2,26 +2,25 @@ package agenda.gui;
 
 import agenda.data.Artist;
 import agenda.data.Performance;
-import agenda.data.Schedule;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class PerformanceTab extends JTable {
-    private Schedule schedule;
+    private ArrayList<Performance> performances;
+    private FestivalFrame frame;
     private JTable table;
     private PerformanceModel model;
     private JScrollPane scroller;
     private ComboBoxRenderer comboBoxRenderer;
 
-    public PerformanceTab(Schedule schedule) {
-        this.schedule = schedule;
-        model = new PerformanceModel(schedule.getPerformances());
+    public PerformanceTab(FestivalFrame frame) {
+        this.frame = frame;
+        this.performances = this.frame.getSchedule().getPerformances();
+        model = new PerformanceModel(this.performances);
         setLayout(new BorderLayout());
         initTable();
         initButtons();
@@ -52,7 +51,7 @@ public class PerformanceTab extends JTable {
 
     public void refresh() {
         comboBoxRenderer.removeAllItems();
-        ArrayList<Artist> artists = this.schedule.getArtists();
+        ArrayList<Artist> artists = this.frame.getSchedule().getArtists();
         for(Artist artist : artists) {
             comboBoxRenderer.addItem(artist.getName());
         }
