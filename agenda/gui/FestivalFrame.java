@@ -43,7 +43,7 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         JTabbedPane tabs = new JTabbedPane();
         scheduleTab = new ScheduleTab(this);
         tabs.addTab("Schedule", scheduleTab);
-        PerformanceTab performanceTab = new PerformanceTab(this.schedule);
+        PerformanceTab performanceTab = new PerformanceTab(this);
         tabs.addTab("Performances", performanceTab);
         tabs.addTab("Artists", new ArtistTab(this));
         add(tabs);
