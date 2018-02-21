@@ -1,9 +1,10 @@
 package agenda.data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class Schedule {
+public class Schedule implements Serializable {
     private LocalDate date;
     private ArrayList<Artist> artists;
     private ArrayList<Stage> stages;

@@ -1,18 +1,30 @@
 package agenda.data;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
-public class Performance {
+public class Performance implements Serializable {
+
+    private String name;
     private Artist artist;
     private Stage stage;
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public Performance(Artist artist, Stage stage, LocalTime startTime, LocalTime endTime) {
+    public Performance(String name, Artist artist, Stage stage, LocalTime startTime, LocalTime endTime) {
+        this.name = name;
         this.artist = artist;
         this.stage = stage;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public Performance() {
+    }
+
+
+    public String getName() {
+        return name;
     }
 
     public Artist getArtist() {
@@ -45,5 +57,9 @@ public class Performance {
 
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

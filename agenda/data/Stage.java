@@ -1,8 +1,10 @@
 package agenda.data;
 
-public class Stage {
-    String name;
-    int capacity;
+import java.io.Serializable;
+
+public class Stage implements Serializable {
+    private String name;
+    private int capacity;
 
     public Stage(String name, int capacity) {
         this.name = name;
@@ -23,5 +25,10 @@ public class Stage {
 
     public void setCapicity(int capicity) {
         this.capacity = capicity;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -1,18 +1,26 @@
 package agenda.gui;
 
 import agenda.data.Artist;
+import agenda.data.Performance;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.util.ArrayList;
 
-public class ArtistTab extends JPanel {
-
+public class PerformanceTab extends JTable {
+    private ArrayList<Performance> performances;
+    private FestivalFrame frame;
     private JTable table;
-    private ArtistModel model;
+    private PerformanceModel model;
     private JScrollPane scroller;
+    private ComboBoxRenderer comboBoxRenderer;
 
-    public ArtistTab() {
+    public PerformanceTab(FestivalFrame frame) {
+        this.frame = frame;
+        this.performances = this.frame.getSchedule().getPerformances();
+        model = new PerformanceModel(this.performances);
         setLayout(new BorderLayout());
         initTable();
         initButtons();
@@ -20,22 +28,40 @@ public class ArtistTab extends JPanel {
 
     private void initTable() {
         table = new JTable();
-        model = new ArtistModel();
-        model.add(new Artist("Justin Bieber", -100));
-        for (int i = 0; i <= 10; i++) {
-            model.add(new Artist("Bob Marley", i));
-        }
         table.getTableHeader().setReorderingAllowed(false);
         scroller = new JScrollPane(table);
-        table.setModel(model);
+
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.addColumn("Artist");
+        tableModel.addColumn("Stage");
+        tableModel.addColumn("Start time");
+        tableModel.addColumn("End time");
+        tableModel.addRow(new Object[]{"hoi"});
+        tableModel.addRow(new Object[]{"doei"});
+        tableModel.addRow(new Object[]{"kill me"});
+        table.setModel(tableModel);
+
+        TableColumn ArtistColumn = table.getColumnModel().getColumn(1);
+        comboBoxRenderer = new ComboBoxRenderer();
+        ArtistColumn.setCellEditor(new DefaultCellEditor(comboBoxRenderer));
+
+        table.setAutoCreateRowSorter(true);
         add(scroller, BorderLayout.CENTER);
+    }
+
+    public void refresh() {
+        comboBoxRenderer.removeAllItems();
+        ArrayList<Artist> artists = this.frame.getSchedule().getArtists();
+        for(Artist artist : artists) {
+            comboBoxRenderer.addItem(artist.getName());
+        }
     }
 
     private void initButtons() {
         JPanel buttonPanel = new JPanel();
         JButton addButton = new JButton("Add");
         addButton.addActionListener(e -> {
-            model.add(new Artist("", 0));
+            model.add(new Performance());
             table.setRowSelectionInterval(model.getRowCount() - 1, model.getRowCount() - 1);
             scroller.validate();
             JScrollBar vertical = scroller.getVerticalScrollBar();
@@ -54,10 +80,11 @@ public class ArtistTab extends JPanel {
                 }
             }
         });
-        JButton saveButton = new JButton("Save");
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
-        buttonPanel.add(saveButton);
         add(buttonPanel, BorderLayout.SOUTH);
     }
+}
+
+class ComboBoxRenderer extends JComboBox{
 }
