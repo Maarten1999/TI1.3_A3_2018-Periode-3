@@ -1,35 +1,33 @@
 package agenda.gui;
 
 import agenda.data.Artist;
-import agenda.data.Performance;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
 
 public class ArtistModel extends AbstractTableModel {
 
     private FestivalFrame frame;
-    private ArrayList<Artist> artists;
 
     public ArtistModel(FestivalFrame frame) {
         this.frame = frame;
-        this.artists = this.frame.getSchedule().getArtists();
     }
 
     public void add(Artist artist) {
-        artists.add(artist);
-        fireTableRowsInserted(artists.size() - 1, artists.size() - 1);
+        this.frame.getSchedule().getArtists().add(artist);
+        fireTableRowsInserted(this.frame.getSchedule().getArtists().size() - 1,
+                this.frame.getSchedule().getArtists().size() - 1);
     }
 
-    public void remove(int index) {
-        String artistName = this.artists.get(index).getName();
+    public void remove(Artist artist) {
+        this.frame.getSchedule().getArtists().remove(artist);
+        String artistName = artist.getName();
         for (int i = 0; i < this.frame.getSchedule().getPerformances().size(); i++) {
             if (this.frame.getSchedule().getPerformances().get(i).getArtist().getName().equals(artistName)) {
                 this.frame.getSchedule().getPerformances().remove(i);
                 i--;
             }
         }
-        this.frame.getSchedule().getArtists().remove(index);
+        this.frame.getSchedule().getArtists().remove(artist);
         fireTableRowsDeleted(this.frame.getSchedule().getArtists().size() - 1,
                 this.frame.getSchedule().getArtists().size() - 1);
     }
@@ -41,7 +39,7 @@ public class ArtistModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return artists.size();
+        return this.frame.getSchedule().getArtists().size();
     }
 
     @Override
@@ -54,12 +52,12 @@ public class ArtistModel extends AbstractTableModel {
         if (column == 0) {
             return "Name";
         }
-        return "popularity";
+        return "Popularity";
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Artist artist = artists.get(rowIndex);
+        Artist artist = this.frame.getSchedule().getArtists().get(rowIndex);
         if (columnIndex == 0) {
             return artist.getName();
         }
@@ -68,13 +66,13 @@ public class ArtistModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        Artist artist = artists.get(rowIndex);
+        Artist artist = this.frame.getSchedule().getArtists().get(rowIndex);
         if (columnIndex == 0) {
             artist.setName((String) aValue);
         } else {
             artist.setPopularity(Integer.parseInt((String) aValue));
         }
-        artists.set(rowIndex, artist);
+        this.frame.getSchedule().getArtists().set(rowIndex, artist);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 }

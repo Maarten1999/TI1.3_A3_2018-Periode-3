@@ -19,6 +19,17 @@ public class Schedule implements Serializable {
         performances = new ArrayList<>();
     }
 
+    public Schedule() {
+        this.date = LocalDate.now();
+        this.name = "New Festival";
+        this.artists = new ArrayList<>();
+        this.performances = new ArrayList<>();
+        this.stages = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            this.stages.add(new Stage("Stage " + (i + 1), 500));
+        }
+    }
+
     public LocalDate getDate() {
         return date;
     }

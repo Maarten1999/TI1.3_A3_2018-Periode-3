@@ -29,22 +29,14 @@ public class ScheduleTab extends JPanel implements MouseListener {
         JPanel panel = new JPanel();
 
         //New button
-        JButton newButton = new JButton("New");
+        JButton newButton = new JButton("New Performance");
         newButton.addActionListener(e -> {
             new PopupWindow(this.schedule);
         });
 
-        //Previous button
-        JButton previousButton = new JButton("Previous");
-
-        //Next button
-        JButton nextButton = new JButton("Next");
-
         addMouseListener(this);
         add(panel, BorderLayout.SOUTH);
         panel.add(newButton);
-        panel.add(previousButton);
-        panel.add(nextButton);
 
         addTestObjects();
         initBoxes();
@@ -52,12 +44,6 @@ public class ScheduleTab extends JPanel implements MouseListener {
 
     private void addTestObjects() {
         this.schedule.addArtist(new Artist("Bennie", 100));
-        this.schedule.addStage(new Stage("Stage 1", 500));
-        this.schedule.addStage(new Stage("Stage 2", 500));
-        this.schedule.addStage(new Stage("Stage 3", 500));
-        this.schedule.addStage(new Stage("Stage 4", 500));
-        this.schedule.addStage(new Stage("Stage 5", 500));
-        this.schedule.addStage(new Stage("Stage 6", 500));
         this.schedule.addPerformace(new Performance("Performance Name",
                 this.schedule.getArtists().get(0),
                 this.schedule.getStages().get(1),

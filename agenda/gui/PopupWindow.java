@@ -4,6 +4,7 @@ import agenda.data.Artist;
 import agenda.data.Performance;
 import agenda.data.Schedule;
 import agenda.data.Stage;
+import sun.rmi.server.LoaderHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -112,6 +113,9 @@ public class PopupWindow extends JDialog {
             } else if (!stageAvailable((Stage) stageBox.getSelectedItem(), startLocalTime, endLocalTime)) {
                 JOptionPane.showMessageDialog(this,
                         "Stage is not available within the selected timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (!isWithinFestivalTime(startLocalTime, endLocalTime)) {
+                JOptionPane.showMessageDialog(this,
+                        "The timeframe of the performance is not within the festival timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 this.performance = new Performance();
                 this.performance.setName(name.getText());
@@ -202,7 +206,10 @@ public class PopupWindow extends JDialog {
             } else if (!stageAvailable((Stage) stageBox.getSelectedItem(), startLocalTime, endLocalTime)) {
                 JOptionPane.showMessageDialog(this,
                         "Stage is not available within the selected timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
-            }else {
+            } else if (!isWithinFestivalTime(startLocalTime, endLocalTime)) {
+                JOptionPane.showMessageDialog(this,
+                        "The timeframe of the performance is not within the festival timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
                 this.performance.setName(name.getText());
                 this.performance.setArtist((Artist) artistBox.getSelectedItem());
                 this.performance.setStage((Stage) stageBox.getSelectedItem());
@@ -257,5 +264,12 @@ public class PopupWindow extends JDialog {
 
     private boolean timeOverlaps(LocalTime s1, LocalTime e1, LocalTime s2, LocalTime e2) {
         return s1.isBefore(e2) && s2.isBefore(e1);
+    }
+
+    private boolean isWithinFestivalTime(LocalTime s, LocalTime e) {
+        return s.isAfter(LocalTime.of(ScheduleTab.START_HOUR,
+                0)) || s.equals(LocalTime.of(ScheduleTab.START_HOUR, 0))
+                && e.isBefore(LocalTime.of(ScheduleTab.END_HOUR, 59)) ||
+                e.equals(LocalTime.of(ScheduleTab.END_HOUR, 59));
     }
 }

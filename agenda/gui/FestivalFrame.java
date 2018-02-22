@@ -4,25 +4,23 @@ import agenda.data.Artist;
 import agenda.data.Schedule;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 public class FestivalFrame extends JFrame implements WindowFocusListener {
 
+    private PerformanceTab performanceTab;
     private Schedule schedule;
-    private final ScheduleTab scheduleTab;
+    private ArtistTab artistTab;
+    private ScheduleTab scheduleTab;
+    private JFileChooser fileChooser;
 
     public FestivalFrame() {
         //Make test schedule
         super("De beste agenda die je ooit zult zien!");
-        this.schedule = new Schedule(9, 2, 2018, "Testname");
+        this.schedule = new Schedule();
         this.schedule.addArtist(new Artist("Boef", 10));
         this.schedule.addArtist(new Artist("Paul Lindelauf", 1));
         this.schedule.addArtist(new Artist("Paul de Mast", 100));
@@ -33,27 +31,29 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         setResizable(false);
         setLocationRelativeTo(null);
         addWindowFocusListener(this);
-//        ImageIcon img = new ImageIcon(getClass().getResource("/icon.png"));
-//        setIconImage(img.getImage());
 
         // Menu bar
         addMenuBar();
 
+        // File chooser
+        addFileChooser();
+
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
-        scheduleTab = new ScheduleTab(this);
-        tabs.addTab("Schedule", scheduleTab);
-        PerformanceTab performanceTab = new PerformanceTab(this);
-        tabs.addTab("Performances", performanceTab);
-        tabs.addTab("Artists", new ArtistTab(this));
+        this.scheduleTab = new ScheduleTab(this);
+        tabs.addTab("Schedule", this.scheduleTab);
+        this.performanceTab = new PerformanceTab(this);
+        tabs.addTab("Performances", this.performanceTab);
+        this.artistTab = new ArtistTab(this);
+        tabs.addTab("Artists", this.artistTab);
         add(tabs);
         tabs.addChangeListener(e -> {
             switch (tabs.getSelectedIndex()) {
                 case 0:
-                    scheduleTab.refresh();
+                    this.scheduleTab.refresh();
                     break;
                 case 1:
-                    performanceTab.refresh();
+                    this.performanceTab.refresh();
                     break;
             }
         });
@@ -61,32 +61,63 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         setVisible(true);
     }
 
+    private void addFileChooser() {
+        this.fileChooser = new JFileChooser();
+    }
+
     private void addMenuBar() {
         JMenuBar menu = new JMenuBar();
         JMenu file = new JMenu("File");
+
+        // New
+        JMenuItem newButton = new JMenuItem("New festival");
+        file.add(newButton);
+        newButton.addActionListener(e -> {
+            this.schedule = new Schedule();
+            this.scheduleTab.refresh();
+            this.artistTab.refresh();
+            this.performanceTab.refresh();
+        });
+
+        // Open
         JMenuItem open = new JMenuItem("Open festival");
         file.add(open);
         open.addActionListener(e -> {
             System.out.println("Open");
-            try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("./festival.ftv"))) {
-                this.schedule = (Schedule) inputStream.readObject();
-                this.scheduleTab.refresh();
-            } catch (Exception e1) {
-                e1.printStackTrace();
+
+            File workingDirectory = new File(System.getProperty("user.dir"));
+            this.fileChooser.setCurrentDirectory(workingDirectory);
+            int returnVal = fileChooser.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                System.out.println("Opening: " + file.getName() + ".");
+                try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(selectedFile))) {
+                    this.schedule = (Schedule) inputStream.readObject();
+                    this.scheduleTab.refresh();
+                    this.artistTab.refresh();
+                    this.performanceTab.refresh();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
             }
-            System.out.println(this.schedule.getPerformances().size());
         });
+
+        // Save
         JMenuItem save = new JMenuItem("Save festival");
         file.add(save);
         save.addActionListener(e -> {
-            System.out.println(this.schedule.getPerformances().size());
             System.out.println("Saved");
-            try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./festival.ftv"))){
-                outputStream.writeObject(schedule);
+
+            File workingDirectory = new File(System.getProperty("user.dir"));
+            this.fileChooser.setCurrentDirectory(workingDirectory);
+            int returnVal = fileChooser.showSaveDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File selectedFile1 = fileChooser.getSelectedFile();
+                try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(selectedFile1))){
+                    outputStream.writeObject(schedule);
+                }
+                catch(Exception exception){exception.printStackTrace();}
             }
-            catch(Exception exception){exception.printStackTrace();}
-            this.schedule = new Schedule(1, 1, 1, "New festival");
-            this.scheduleTab.refresh();
         });
         menu.add(file);
 

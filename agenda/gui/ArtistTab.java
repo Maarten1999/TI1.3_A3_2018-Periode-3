@@ -12,7 +12,7 @@ public class ArtistTab extends JPanel {
     private ArtistModel model;
     private JScrollPane scroller;
 
-    public ArtistTab(FestivalFrame frame) {
+    ArtistTab(FestivalFrame frame) {
         this.frame = frame;
         model = new ArtistModel(this.frame);
         setLayout(new BorderLayout());
@@ -27,6 +27,7 @@ public class ArtistTab extends JPanel {
         table.setModel(model);
         add(scroller, BorderLayout.CENTER);
         table.setAutoCreateRowSorter(true);
+        table.getRowSorter().toggleSortOrder(0);
     }
 
     private void initButtons() {
@@ -43,7 +44,8 @@ public class ArtistTab extends JPanel {
         removeButton.addActionListener(e -> {
             if (model.getRowCount() != 0) {
                 int row = table.getSelectedRow();
-                model.remove(row);
+                Artist artist = this.frame.getSchedule().getArtists().get(table.convertRowIndexToModel(table.getSelectedRow()));
+                model.remove(artist);
                 if (model.getRowCount() != 0) {
                     if (row < model.getRowCount())
                         table.setRowSelectionInterval(row, row);
@@ -55,5 +57,9 @@ public class ArtistTab extends JPanel {
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
         add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    public void refresh() {
+        model.fireTableDataChanged();
     }
 }
