@@ -4,7 +4,6 @@ import agenda.data.Artist;
 import agenda.data.Performance;
 import agenda.data.Schedule;
 import agenda.data.Stage;
-import sun.rmi.server.LoaderHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class PopupWindow extends JDialog {
@@ -94,7 +94,10 @@ public class PopupWindow extends JDialog {
         JSpinner endTime = new JSpinner(new SpinnerDateModel());
         JSpinner.DateEditor timeEditorEnd = new JSpinner.DateEditor(endTime, "HH:mm");
         endTime.setEditor(timeEditorEnd);
-        endTime.setValue(new Date());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.HOUR_OF_DAY, 1);
+        endTime.setValue(cal.getTime());
         subPanel.add(endTime);
 
         // Save button

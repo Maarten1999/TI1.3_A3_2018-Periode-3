@@ -38,18 +38,18 @@ public class ScheduleTab extends JPanel implements MouseListener {
         add(panel, BorderLayout.SOUTH);
         panel.add(newButton);
 
-        addTestObjects();
+//        addTestObjects();
         initBoxes();
     }
 
-    private void addTestObjects() {
-        this.schedule.addArtist(new Artist("Bennie", 100));
-        this.schedule.addPerformace(new Performance("Performance Name",
-                this.schedule.getArtists().get(0),
-                this.schedule.getStages().get(1),
-                LocalTime.of(14, 40),
-                LocalTime.of(20, 20)));
-    }
+//    private void addTestObjects() {
+//        this.schedule.addArtist(new Artist("Bennie", 100));
+//        this.schedule.addPerformace(new Performance("Performance Name",
+//                this.schedule.getArtists().get(0),
+//                this.schedule.getStages().get(1),
+//                LocalTime.of(14, 40),
+//                LocalTime.of(20, 20)));
+//    }
 
     private void initBoxes() {
         this.performanceBoxes = new ArrayList<>();
@@ -98,6 +98,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
     private void drawStageBar(Graphics2D g2d) {
         ArrayList<Stage> stages = this.schedule.getStages();
 
+        ScheduleTab.font = ScheduleTab.font.deriveFont(16f);
         g2d.setColor(BAR_COLOR);
         g2d.fill(new Rectangle2D.Double(0, 0, TIMELINE_BAR_WIDTH, STAGE_BAR_HEIGHT));
 
@@ -124,6 +125,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
     }
 
     private void drawTimeLine(Graphics2D g2d) {
+        ScheduleTab.font = ScheduleTab.font.deriveFont(12f);
         int y = STAGE_BAR_HEIGHT;
         int lineLength = this.schedule.getStages().size() * STAGE_BAR_WIDTH + TIMELINE_BAR_WIDTH;
         for (int hour = START_HOUR; hour <= END_HOUR; hour++) {
@@ -220,6 +222,7 @@ class PerformanceBox {
         g2d.draw(box);
 
         // Draw strings
+        g2d.setClip(this.box);
         g2d.setColor(Color.BLACK);
         ScheduleTab.font = ScheduleTab.font.deriveFont((float)16);
         String nameString = this.performance.getName();
@@ -234,6 +237,7 @@ class PerformanceBox {
                 this.performance.getEndTime().toString().substring(0, 5);
         timeString = shorten(timeString);
         ScheduleTab.drawText(g2d, timeString, x + ScheduleTab.STAGE_BAR_WIDTH / 2, y + 60, true);
+        g2d.setClip(null);
     }
 
     private String shorten(String string) {
