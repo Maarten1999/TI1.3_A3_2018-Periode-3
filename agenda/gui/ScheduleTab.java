@@ -31,6 +31,10 @@ public class ScheduleTab extends JPanel implements MouseListener {
         //New button
         JButton newButton = new JButton("New Performance");
         newButton.addActionListener(e -> {
+            if(frame.getSchedule().getArtists().size() < 1){
+                JOptionPane.showMessageDialog(frame, "U have to first add an artist to the artist table ", "Artist table", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             new PopupWindow(this.schedule);
         });
 
@@ -170,6 +174,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         for (PerformanceBox performanceBox : this.performanceBoxes) {
             if (performanceBox.containsMouse(e.getPoint())) {
+                System.out.println("hallo"+frame.getSchedule().getArtists().size() );
                 PopupWindow popup = new PopupWindow(this.schedule, performanceBox.getPerformance());
             }
         }

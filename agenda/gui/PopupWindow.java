@@ -266,7 +266,7 @@ public class PopupWindow extends JDialog {
     }
 
     private boolean timeOverlaps(LocalTime s1, LocalTime e1, LocalTime s2, LocalTime e2) {
-        return s1.isBefore(e2) && s2.isBefore(e1);
+        return s1.isBefore(e2) && s2.isBefore(e1) && !s1.equals(e2) && !s2.equals(e1);
     }
 
     private boolean isWithinFestivalTime(LocalTime s, LocalTime e) {
