@@ -1,6 +1,5 @@
 package agenda.gui;
 
-import agenda.data.Artist;
 import agenda.data.Schedule;
 
 import javax.swing.*;
@@ -21,9 +20,6 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         //Make test schedule
         super("De beste agenda die je ooit zult zien!");
         this.schedule = new Schedule();
-//        this.schedule.addArtist(new Artist("Boef", 10));
-//        this.schedule.addArtist(new Artist("Paul Lindelauf", 1));
-//        this.schedule.addArtist(new Artist("Paul de Mast", 100));
 
         // Window settings
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
