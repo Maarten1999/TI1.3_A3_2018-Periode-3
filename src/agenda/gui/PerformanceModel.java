@@ -1,0 +1,81 @@
+package agenda.gui;
+
+import agenda.data.Performance;
+
+import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
+
+public class PerformanceModel extends AbstractTableModel {
+
+    private FestivalFrame frame;
+
+    PerformanceModel(FestivalFrame frame) {
+        this.frame = frame;
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+
+    @Override
+    public int getRowCount() {
+        return this.frame.getSchedule().getPerformances().size();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 5;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        String returnValue = "";
+        switch (column) {
+            case 0:
+                returnValue = "Name";
+                break;
+            case 1:
+                returnValue = "Artist";
+                break;
+            case 2:
+                returnValue = "Stage";
+                break;
+            case 3:
+                returnValue = "Start time";
+                break;
+            case 4:
+                returnValue = "End time";
+                break;
+        }
+        return returnValue;
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        ArrayList<Performance> performances = this.frame.getSchedule().getPerformances();
+        String returnValue = "";
+        switch (columnIndex) {
+            case 0:
+                returnValue = performances.get(rowIndex).getName();
+                break;
+            case 1:
+                returnValue = performances.get(rowIndex).getArtist().getName();
+                break;
+            case 2:
+                returnValue = performances.get(rowIndex).getStage().getName();
+                break;
+            case 3:
+                returnValue = performances.get(rowIndex).getStartTime().toString().substring(0, 5);
+                break;
+            case 4:
+                returnValue = performances.get(rowIndex).getEndTime().toString().substring(0, 5);
+                break;
+        }
+        return returnValue;
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    }
+}
