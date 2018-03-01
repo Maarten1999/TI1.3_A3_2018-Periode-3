@@ -2,7 +2,7 @@
  "infinite":false,
  "layers":[
         {
-         "data":[1, 2, 15, 126],
+         "data":[1, 1, 1, 1],
          "height":2,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -13,7 +13,7 @@
          "y":0
         }, 
         {
-         "data":[0, 0, 0, 0],
+         "data":[23, 0, 0, 0],
          "height":2,
          "name":"Tile Layer 2",
          "opacity":1,
@@ -32,7 +32,7 @@
         {
          "columns":14,
          "firstgid":1,
-         "image":"..\/tilesets\/hallo.png",
+         "image":"atlas.png",
          "imageheight":450,
          "imagewidth":450,
          "margin":0,
