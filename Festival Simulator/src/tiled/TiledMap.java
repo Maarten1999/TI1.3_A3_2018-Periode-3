@@ -1,11 +1,8 @@
 package tiled;
 
 import javax.imageio.ImageIO;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import javax.json.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,61 +12,78 @@ public class TiledMap {
 
     private int width;
     private int height;
-
     private int tileHeight;
     private int tileWidth;
 
-    private ArrayList<BufferedImage> tiles = new ArrayList<>();
-
-    // TODO: Seperate layers
+    private ArrayList<TiledTile> tiles = new ArrayList<>();
     private ArrayList<TiledLayer> layers = new ArrayList<>();
-    private int[][] layer;
 
     public TiledMap(InputStream stream) {
-        JsonReader reader = null;
+        JsonReader reader;
         reader = Json.createReader(stream);
-        JsonObject root = reader.readObject();
+        JsonObject object = reader.readObject();
 
-        this.width = root.getInt("width");
-        this.height = root.getInt("height");
+        // Init
+        initLayers(object);
+        initTiles(object);
+    }
 
-        //load the tilemap
+    public void draw(Graphics2D g2d) {
+        for (TiledLayer tiledLayer : this.layers) {
+            tiledLayer.draw(g2d);
+        }
+    }
+
+    private void initLayers(JsonObject object) {
+        this.width = object.getInt("width");
+        this.height = object.getInt("height");
+
+        JsonArray layersTemp = object.getJsonArray("layers");
+        for (int i = 0; i < layersTemp.size(); i++) {
+            int[][] data = new int[height][width];
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    data[y][x] = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
+                }
+            }
+            this.layers.add(new TiledLayer(data, this));
+        }
+    }
+
+    private void initTiles(JsonObject object) {
         try {
-            String path = root.getJsonArray("tilesets").getJsonObject(0).getString("image");
-            System.out.println(path);
-            BufferedImage layers = ImageIO.read(getClass().getResource("\\..\\tilesets\\" + path));
+            JsonArray tileSets = object.getJsonArray("tilesets");
+            for (int i = 0; i < tileSets.size(); i++) {
+                String path = tileSets.getJsonObject(i).getString("image");
+                BufferedImage tileSet = ImageIO.read(getClass().getResource("\\..\\tilesets\\" + path));
 
-            tileHeight = root.getInt("tileheight");
-            tileWidth = root.getInt("tilewidth");
+                this.tileHeight = tileSets.getJsonObject(i).getInt("tileheight");
+                this.tileWidth = tileSets.getJsonObject(i).getInt("tilewidth");
 
-            for (int y = 0; y < layers.getHeight(); y += tileHeight) {
-                for (int x = 0; x < layers.getWidth(); x += tileWidth) {
-                    tiles.add(layers.getSubimage(x, y, tileWidth, tileHeight));
+                for (int y = 0; y < tileSet.getHeight(); y += tileHeight) {
+                    for (int x = 0; x < tileSet.getWidth(); x += tileWidth) {
+                        this.tiles.add(new TiledTile(tileSet.getSubimage(x, y, tileWidth, tileHeight)));
+                    }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        layer = new int[height][width];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                layer[y][x] = root.getJsonArray("layers").getJsonObject(0).getJsonArray("data").getInt(y * height + x);
-            }
-        }
     }
 
-    public void draw(Graphics2D g2d) {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (layer[y][x] <= 0)
-                    continue;
+    public TiledTile getTile(int index) {
+        return this.tiles.get(index);
+    }
 
-                g2d.drawImage(
-                        tiles.get(layer[y][x]),
-                        AffineTransform.getTranslateInstance(x * tileWidth, y * tileHeight),
-                        null);
-            }
-        }
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getTileSize() {
+        return tileHeight;
     }
 }

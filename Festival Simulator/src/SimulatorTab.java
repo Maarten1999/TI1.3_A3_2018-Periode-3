@@ -20,7 +20,7 @@ public class SimulatorTab extends JPanel {
             System.out.println(e.getInput());
             e.printStackTrace();
         }
-        map = new TiledMap(getClass().getResourceAsStream("maps/testMap.json"));
+        map = new TiledMap(getClass().getResourceAsStream("maps/test2.json"));
     }
 
     @Override
