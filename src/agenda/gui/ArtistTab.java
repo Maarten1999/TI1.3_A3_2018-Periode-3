@@ -1,20 +1,21 @@
 package agenda.gui;
 
 import agenda.data.Artist;
+import agenda.data.Schedule;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ArtistTab extends JPanel {
 
-    private FestivalFrame frame;
+    private Schedule schedule;
     private JTable table;
     private ArtistModel model;
     private JScrollPane scroller;
 
-    ArtistTab(FestivalFrame frame) {
-        this.frame = frame;
-        model = new ArtistModel(this.frame);
+    ArtistTab(Schedule schedule) {
+        this.schedule = schedule;
+        model = new ArtistModel(this.schedule);
         setLayout(new BorderLayout());
         initTable();
         initButtons();
@@ -44,7 +45,7 @@ public class ArtistTab extends JPanel {
         removeButton.addActionListener(e -> {
             if (model.getRowCount() != 0) {
                 int row = table.getSelectedRow();
-                Artist artist = this.frame.getSchedule().getArtists().get(table.convertRowIndexToModel(table.getSelectedRow()));
+                Artist artist = this.schedule.getArtists().get(table.convertRowIndexToModel(table.getSelectedRow()));
                 model.remove(artist);
                 if (model.getRowCount() != 0) {
                     if (row < model.getRowCount())

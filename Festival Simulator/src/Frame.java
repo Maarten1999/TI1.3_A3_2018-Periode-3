@@ -18,7 +18,6 @@ public class Frame extends JFrame {
         setMinimumSize(new Dimension(1280, 720));
         setLocationRelativeTo(null);
         setContentPane(new SimulatorTab());
-
         setVisible(true);
     }
 }

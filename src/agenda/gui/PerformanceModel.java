@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public class PerformanceModel extends AbstractTableModel {
 
-    private FestivalFrame frame;
+    private ArrayList<Performance> performances;
 
-    PerformanceModel(FestivalFrame frame) {
-        this.frame = frame;
+    PerformanceModel(ArrayList<Performance> performances) {
+        this.performances = performances;
     }
 
     @Override
@@ -20,7 +20,7 @@ public class PerformanceModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return this.frame.getSchedule().getPerformances().size();
+        return this.performances.size();
     }
 
     @Override
@@ -53,7 +53,6 @@ public class PerformanceModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        ArrayList<Performance> performances = this.frame.getSchedule().getPerformances();
         String returnValue = "";
         switch (columnIndex) {
             case 0:
