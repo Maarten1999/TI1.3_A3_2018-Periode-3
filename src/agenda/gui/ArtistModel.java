@@ -4,12 +4,13 @@ import agenda.data.Artist;
 import agenda.data.Schedule;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 
 public class ArtistModel extends AbstractTableModel {
 
     private Schedule schedule;
 
-    public ArtistModel(Schedule schedule) {
+    ArtistModel(Schedule schedule) {
         this.schedule = schedule;
     }
 
@@ -23,10 +24,15 @@ public class ArtistModel extends AbstractTableModel {
         this.schedule.getArtists().remove(artist);
         String artistName = artist.getName();
         for (int i = 0; i < this.schedule.getPerformances().size(); i++) {
-            for(int i2 = 0; i < this.frame.getSchedule().getPerformances().get(i).getArtists().size()-1; i++){
-            if (this.schedule.getPerformances().get(i).getArtist().getName().equals(artistName)) {
-                this.schedule.getPerformances().remove(i);
-                i--;
+            outerloop:
+            for (int i2 = 0; i2 < this.schedule.getPerformances().get(i).getArtists().size() - 1; i++) {
+                ArrayList<Artist> artists = this.schedule.getPerformances().get(i).getArtists();
+                for (Artist artist1 : artists) {
+                    if (artist1.getName().equals(artistName)) {
+                        this.schedule.getPerformances().remove(i);
+                        i--;
+                        break outerloop;
+                    }
                 }
             }
         }

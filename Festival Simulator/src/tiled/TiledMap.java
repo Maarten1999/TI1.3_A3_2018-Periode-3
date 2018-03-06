@@ -26,6 +26,7 @@ public class TiledMap {
         // Init
         initLayers(object);
         initTiles(object);
+        initImages();
     }
 
     public void draw(Graphics2D g2d) {
@@ -72,6 +73,12 @@ public class TiledMap {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void initImages() {
+        for (TiledLayer layer : this.layers) {
+            layer.createBufferedImage();
         }
     }
 
