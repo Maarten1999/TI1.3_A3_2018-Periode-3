@@ -16,6 +16,7 @@ public class Frame extends JFrame {
         super("De beste festival simulator die je ooit zult zien!");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(1280, 720));
+        setExtendedState(getExtendedState() | Frame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setContentPane(new SimulatorTab());
 

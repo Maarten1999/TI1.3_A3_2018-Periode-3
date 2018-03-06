@@ -34,6 +34,10 @@ public class TiledMap {
         }
     }
 
+    public void draw(Graphics2D g2d, int layer) {
+        this.layers.get(layer).draw(g2d);
+    }
+
     private void initLayers(JsonObject object) {
         this.width = object.getInt("width");
         this.height = object.getInt("height");
@@ -85,5 +89,9 @@ public class TiledMap {
 
     public int getTileSize() {
         return tileHeight;
+    }
+
+    public int getLayerCount() {
+        return layers.size();
     }
 }
