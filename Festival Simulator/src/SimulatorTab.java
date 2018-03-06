@@ -6,7 +6,7 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class SimulatorTab extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class SimulatorTab extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
 
     private VisitorManager visitorManager;
     private TiledMap map;
@@ -82,8 +82,7 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
     public void keyTyped(KeyEvent e) {
     }
 
-    public void mouseDragged(MouseEvent e) {
-    }
+
 
     public void keyReleased(KeyEvent e) {
     }
