@@ -41,6 +41,7 @@ public class ArtistTab extends JPanel {
             JScrollBar vertical = scroller.getVerticalScrollBar();
             vertical.setValue(vertical.getMaximum());
         });
+
         JButton removeButton = new JButton("Remove");
         removeButton.addActionListener(e -> {
             if (model.getRowCount() != 0) {
