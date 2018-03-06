@@ -1,8 +1,10 @@
 package agenda.gui;
 
 import agenda.data.Schedule;
+import agenda.data.Stage;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -18,8 +20,9 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
     public FestivalFrame() {
         //Make test schedule
-        super("De beste agenda die je ooit zult zien!");
         this.schedule = new Schedule();
+        addMockStages();
+        setTitle(this.schedule.getName());
 
         // Window settings
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -27,7 +30,7 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         setResizable(false);
         setLocationRelativeTo(null);
         addWindowFocusListener(this);
-
+        System.out.println(this.getContentPane().getSize().getWidth());
         // Menu bar
         addMenuBar();
 
@@ -36,11 +39,11 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
-        this.scheduleTab = new ScheduleTab(this);
+        this.scheduleTab = new ScheduleTab(schedule);
         tabs.addTab("Schedule", this.scheduleTab);
-        this.performanceTab = new PerformanceTab(this);
+        this.performanceTab = new PerformanceTab(schedule);
         tabs.addTab("Performances", this.performanceTab);
-        this.artistTab = new ArtistTab(this);
+        this.artistTab = new ArtistTab(schedule);
         tabs.addTab("Artists", this.artistTab);
         add(tabs);
         tabs.addChangeListener(e -> {
@@ -55,10 +58,21 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         });
 
         setVisible(true);
+
     }
 
     private void addFileChooser() {
         this.fileChooser = new JFileChooser();
+        FileNameExtensionFilter ftvExtensionFilter = new FileNameExtensionFilter("ftv file", "ftv");
+        fileChooser.setFileFilter(ftvExtensionFilter);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+    }
+
+
+    private void addMockStages(){
+        for (int i = 0; i < 6; i++) {
+            this.schedule.addStage(new Stage("Stage " + (i + 1), 500));
+        }
     }
 
     private void addMenuBar() {
@@ -69,7 +83,8 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         JMenuItem newButton = new JMenuItem("New festival");
         file.add(newButton);
         newButton.addActionListener(e -> {
-            this.schedule = new Schedule();
+            this.schedule.empty();
+            addMockStages();
             this.scheduleTab.refresh();
             this.artistTab.refresh();
             this.performanceTab.refresh();
@@ -86,9 +101,10 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
             int returnVal = fileChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                System.out.println("Opening: " + file.getName() + ".");
+                System.out.println("Opening: " + selectedFile.getName() + ".");
                 try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(selectedFile))) {
-                    this.schedule = (Schedule) inputStream.readObject();
+                    this.schedule.load( (Schedule) inputStream.readObject());
+                    setTitle(selectedFile.getName());
                     this.scheduleTab.refresh();
                     this.artistTab.refresh();
                     this.performanceTab.refresh();
@@ -109,6 +125,10 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
             int returnVal = fileChooser.showSaveDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File selectedFile1 = fileChooser.getSelectedFile();
+                if(!selectedFile1.getAbsolutePath().endsWith(".ftv"))
+                    selectedFile1 = new File(selectedFile1.getName()+".ftv");
+                schedule.setName(selectedFile1.getName());
+                System.out.println("saved as: "+selectedFile1.getName());
                 try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(selectedFile1))){
                     outputStream.writeObject(schedule);
                 }

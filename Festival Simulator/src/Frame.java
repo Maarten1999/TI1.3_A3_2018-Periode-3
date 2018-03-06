@@ -19,7 +19,6 @@ public class Frame extends JFrame {
         setExtendedState(getExtendedState() | Frame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setContentPane(new SimulatorTab());
-
         setVisible(true);
     }
 }

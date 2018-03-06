@@ -1,17 +1,19 @@
 package agenda.gui;
 
+import agenda.data.Schedule;
+
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import java.awt.*;
 
 public class PerformanceTab extends JTable {
-    private FestivalFrame frame;
+    private Schedule schedule;
     private PerformanceModel model;
     private JTable table;
 
-    public PerformanceTab(FestivalFrame frame) {
-        this.frame = frame;
-        model = new PerformanceModel(this.frame);
+    public PerformanceTab(Schedule schedule) {
+        this.schedule = schedule;
+        model = new PerformanceModel(this.schedule.getPerformances());
         setLayout(new BorderLayout());
         initTable();
     }
@@ -21,7 +23,7 @@ public class PerformanceTab extends JTable {
         table.getTableHeader().setReorderingAllowed(false);
         JScrollPane scroller = new JScrollPane(table);
 
-        PerformanceModel model = new PerformanceModel(this.frame);
+        PerformanceModel model = new PerformanceModel(this.schedule.getPerformances());
         table.setModel(model);
 
         table.setAutoCreateRowSorter(true);

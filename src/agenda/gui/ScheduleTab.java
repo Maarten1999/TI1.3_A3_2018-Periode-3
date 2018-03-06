@@ -18,21 +18,19 @@ import java.util.ArrayList;
 
 public class ScheduleTab extends JPanel implements MouseListener {
 
-    private FestivalFrame frame;
     private Schedule schedule;
     private ArrayList<PerformanceBox> performanceBoxes;
 
-    public ScheduleTab(FestivalFrame frame) {
-        this.frame = frame;
-        this.schedule = frame.getSchedule();
+    public ScheduleTab(Schedule schedule) {
+        this.schedule = schedule;
         setLayout(new BorderLayout());
         JPanel panel = new JPanel();
 
         //New button
         JButton newButton = new JButton("New Performance");
         newButton.addActionListener(e -> {
-            if(frame.getSchedule().getArtists().size() < 1){
-                JOptionPane.showMessageDialog(frame, "You have to first add an artist to the artist table", "Artist table", JOptionPane.ERROR_MESSAGE);
+            if(schedule.getArtists().size() < 1){
+               JOptionPane.showMessageDialog(null, "You have to first add an artist to the artist table", "Artist table", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             new PopupWindow(this.schedule);
@@ -165,7 +163,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
     }
 
     public void refresh() {
-        this.schedule = this.frame.getSchedule();
+        this.schedule = schedule;
         initBoxes();
         repaint();
     }
@@ -174,7 +172,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         for (PerformanceBox performanceBox : this.performanceBoxes) {
             if (performanceBox.containsMouse(e.getPoint())) {
-                System.out.println("hallo"+frame.getSchedule().getArtists().size() );
+                System.out.println("hallo"+schedule.getArtists().size() );
                 PopupWindow popup = new PopupWindow(this.schedule, performanceBox.getPerformance());
             }
         }

@@ -11,25 +11,33 @@ public class Schedule implements Serializable {
     private ArrayList<Performance> performances;
     private String name;
 
-    public Schedule(int day, int month, int year, String name) {
-        date = LocalDate.of(year, month, day);
-        this.name = name;
-        artists = new ArrayList<>();
-        stages = new ArrayList<>();
-        performances = new ArrayList<>();
-    }
-
     public Schedule() {
         this.date = LocalDate.now();
         this.name = "New Festival";
         this.artists = new ArrayList<>();
         this.performances = new ArrayList<>();
         this.stages = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            this.stages.add(new Stage("Stage " + (i + 1), 500));
-        }
+
     }
 
+    public void load(Schedule schedule){
+        artists.clear();
+        stages.clear();
+        performances.clear();
+        performances.addAll(schedule.performances);
+        stages.addAll(schedule.stages);
+        artists.addAll(schedule.artists);
+        this.name = schedule.name;
+    }
+
+
+    public void empty(){
+        artists.clear();
+        stages.clear();
+        performances.clear();
+        this.date = LocalDate.now();
+        this.name = "New Festival";
+    }
     public LocalDate getDate() {
         return date;
     }
@@ -44,6 +52,10 @@ public class Schedule implements Serializable {
 
     public ArrayList<Performance> getPerformances() {
         return performances;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {
