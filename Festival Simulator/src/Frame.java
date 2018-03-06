@@ -18,6 +18,7 @@ public class Frame extends JFrame {
         setMinimumSize(new Dimension(1280, 720));
         setExtendedState(getExtendedState() | Frame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
+        setResizable(false);
         setContentPane(new SimulatorTab());
         setVisible(true);
     }
