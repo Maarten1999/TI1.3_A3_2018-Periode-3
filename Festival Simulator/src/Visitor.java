@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public class Visitor {
     private int width;
     private int height;
     private int size;
+    private boolean circle;
+    private int killedVisitor;
 
     Visitor(BufferedImage image, int width, int height) {
         this.image = image;
@@ -86,7 +89,7 @@ public class Visitor {
                 if (this.collisionTime >= this.punchingTime) {
                     this.collisionTime = this.punchingTime - 20;
                     if (visitors.get(i).dealDamage(this.damage)) {
-                        visitors.remove(i);
+                        this.killedVisitor = i;
                     }
                 }
             }
@@ -120,5 +123,19 @@ public class Visitor {
 
     public int getHealth() {
         return health;
+    }
+
+    public Shape getCircle() {
+        return new Ellipse2D.Double(this.position.getX() - this.size / 2,
+                this.position.getY() - this.size / 2,
+                this.size, this.size);
+    }
+
+    public Point2D getPosition() {
+        return position;
+    }
+
+    public int getKilledVisitor() {
+        return killedVisitor;
     }
 }
