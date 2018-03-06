@@ -94,14 +94,12 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         JMenuItem open = new JMenuItem("Open festival");
         file.add(open);
         open.addActionListener(e -> {
-            System.out.println("Open");
 
             File workingDirectory = new File(System.getProperty("user.dir"));
             this.fileChooser.setCurrentDirectory(workingDirectory);
             int returnVal = fileChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                System.out.println("Opening: " + selectedFile.getName() + ".");
                 try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(selectedFile))) {
                     this.schedule.load( (Schedule) inputStream.readObject());
                     setTitle(selectedFile.getName());
@@ -118,8 +116,6 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         JMenuItem save = new JMenuItem("Save festival");
         file.add(save);
         save.addActionListener(e -> {
-            System.out.println("Saved");
-
             File workingDirectory = new File(System.getProperty("user.dir"));
             this.fileChooser.setCurrentDirectory(workingDirectory);
             int returnVal = fileChooser.showSaveDialog(this);

@@ -63,7 +63,6 @@ public class ScheduleTab extends JPanel implements MouseListener {
 
     @Override
     protected void paintComponent(Graphics g) {
-        System.out.println("repaint");
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         RenderingHints rh = new RenderingHints(
@@ -172,7 +171,6 @@ public class ScheduleTab extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         for (PerformanceBox performanceBox : this.performanceBoxes) {
             if (performanceBox.containsMouse(e.getPoint())) {
-                System.out.println("hallo"+schedule.getArtists().size() );
                 PopupWindow popup = new PopupWindow(this.schedule, performanceBox.getPerformance());
             }
         }
@@ -232,7 +230,13 @@ class PerformanceBox {
         nameString = shorten(nameString);
         ScheduleTab.drawText(g2d, nameString, x + ScheduleTab.STAGE_BAR_WIDTH / 2, y + 20, true);
 
-        String artistString = this.performance.getArtist().getName();
+        String artistString = "";
+        for(int i = 0; i < this.performance.getArtists().size(); i++){
+            artistString += this.performance.getArtists().get(i).getName();
+            if(i != this.performance.getArtists().size() - 1){
+                artistString += ", ";
+            }
+        }
         artistString = shorten(artistString);
         ScheduleTab.drawText(g2d, artistString, x + ScheduleTab.STAGE_BAR_WIDTH / 2, y + 40, true);
 

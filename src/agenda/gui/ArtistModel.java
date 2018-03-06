@@ -23,9 +23,11 @@ public class ArtistModel extends AbstractTableModel {
         this.schedule.getArtists().remove(artist);
         String artistName = artist.getName();
         for (int i = 0; i < this.schedule.getPerformances().size(); i++) {
+            for(int i2 = 0; i < this.frame.getSchedule().getPerformances().get(i).getArtists().size()-1; i++){
             if (this.schedule.getPerformances().get(i).getArtist().getName().equals(artistName)) {
                 this.schedule.getPerformances().remove(i);
                 i--;
+                }
             }
         }
         this.schedule.getArtists().remove(artist);

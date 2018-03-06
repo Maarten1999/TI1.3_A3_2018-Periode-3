@@ -7,6 +7,8 @@ import agenda.data.Stage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +21,7 @@ public class PopupWindow extends JDialog {
 
     private Schedule schedule;
     private Performance performance;
+    private ArrayList<Artist> tempArtistList;
 
     public PopupWindow(Schedule schedule, Performance performance) {
         // Window stuff
@@ -38,7 +41,6 @@ public class PopupWindow extends JDialog {
         JPanel subPanel = initSubPanelNew();
         mainPanel.add(subPanel);
         setVisible(true);
-
     }
 
     private JPanel initPanel() {
@@ -65,12 +67,12 @@ public class PopupWindow extends JDialog {
 
         // Artist
         subPanel.add(new JLabel("Artist:"));
-        JComboBox artistBox = new JComboBox();
-        ArrayList<Artist> artists = this.schedule.getArtists();
-        for (Artist artist : artists) {
-            artistBox.addItem(artist);
-        }
-        subPanel.add(artistBox);
+        JButton chooseArtistsButton = new JButton("Select artist(s)");
+        chooseArtistsButton.addActionListener(e -> {
+            ArtistPopupWindow artistPopupWindow = new ArtistPopupWindow(this.schedule, tempArtistList);
+            tempArtistList = artistPopupWindow.getArtistList();
+        });
+        subPanel.add(chooseArtistsButton);
 
         // Stage
         subPanel.add(new JLabel("Stage:"));
@@ -110,9 +112,6 @@ public class PopupWindow extends JDialog {
             if (!isGoodTime(startLocalTime, endLocalTime)) {
                 JOptionPane.showMessageDialog(this,
                         "Start time must be earlier than end time!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else if (!artistAvailable((Artist) artistBox.getSelectedItem(), startLocalTime, endLocalTime)) {
-                JOptionPane.showMessageDialog(this,
-                        "Artist is not available within the selected timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (!stageAvailable((Stage) stageBox.getSelectedItem(), startLocalTime, endLocalTime)) {
                 JOptionPane.showMessageDialog(this,
                         "Stage is not available within the selected timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -120,15 +119,23 @@ public class PopupWindow extends JDialog {
                 JOptionPane.showMessageDialog(this,
                         "The timeframe of the performance is not within the festival timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                this.performance = new Performance();
-                this.performance.setName(name.getText());
-                this.performance.setArtist((Artist) artistBox.getSelectedItem());
-                this.performance.setStage((Stage) stageBox.getSelectedItem());
-                this.performance.setStartTime(startLocalTime);
-                this.performance.setEndTime(endLocalTime);
-                this.schedule.addPerformace(this.performance);
-                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-            }
+                if (tempArtistList != null)
+                    for (Artist a : tempArtistList) {
+                        if (!artistAvailable(a, startLocalTime, endLocalTime)) {
+                            JOptionPane.showMessageDialog(this, "Artist is not available within the selected timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+
+            this.performance = new Performance();
+            this.performance.setName(name.getText());
+            this.performance.setArtists(tempArtistList);
+            this.performance.setStage((Stage) stageBox.getSelectedItem());
+            this.performance.setStartTime(startLocalTime);
+            this.performance.setEndTime(endLocalTime);
+            this.schedule.addPerformace(this.performance);
+            dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        }
         });
         subPanel.add(save);
         return subPanel;
@@ -145,15 +152,26 @@ public class PopupWindow extends JDialog {
         JTextField name = new JTextField(this.performance.getName());
         subPanel.add(name);
 
-        // Artist
+
+//        // Artist old
+//        subPanel.add(new JLabel("Artist:"));
+//        JComboBox artistBox = new JComboBox();
+//        ArrayList<Artist> artists = this.schedule.getArtists();
+//        for (Artist artist : artists) {
+//            artistBox.addItem(artist);
+//        }
+//        artistBox.setSelectedItem(this.performance.getArtist());
+//        subPanel.add(artistBox);
+
+        // Artist new
         subPanel.add(new JLabel("Artist:"));
-        JComboBox artistBox = new JComboBox();
-        ArrayList<Artist> artists = this.schedule.getArtists();
-        for (Artist artist : artists) {
-            artistBox.addItem(artist);
-        }
-        artistBox.setSelectedItem(this.performance.getArtist());
-        subPanel.add(artistBox);
+        JButton chooseArtistsButton = new JButton("Select artist(s)");
+        tempArtistList = performance.getArtists();
+        chooseArtistsButton.addActionListener(e -> {
+            ArtistPopupWindow artistPopupWindow = new ArtistPopupWindow(this.schedule, tempArtistList);
+            tempArtistList = artistPopupWindow.getArtistList();
+        });
+        subPanel.add(chooseArtistsButton);
 
         // Stage
         subPanel.add(new JLabel("Stage:"));
@@ -203,9 +221,6 @@ public class PopupWindow extends JDialog {
             if (!isGoodTime(startLocalTime, endLocalTime)) {
                 JOptionPane.showMessageDialog(this,
                         "Start time must be earlier than end time!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else if (!artistAvailable((Artist) artistBox.getSelectedItem(), startLocalTime, endLocalTime)) {
-                JOptionPane.showMessageDialog(this,
-                        "Artist is not available within the selected timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (!stageAvailable((Stage) stageBox.getSelectedItem(), startLocalTime, endLocalTime)) {
                 JOptionPane.showMessageDialog(this,
                         "Stage is not available within the selected timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -213,8 +228,15 @@ public class PopupWindow extends JDialog {
                 JOptionPane.showMessageDialog(this,
                         "The timeframe of the performance is not within the festival timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
+            if (tempArtistList != null)
+                for (Artist a : tempArtistList) {
+                    if (!artistAvailable(a, startLocalTime, endLocalTime)) {
+                        JOptionPane.showMessageDialog(this, "Artist is not available within the selected timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 this.performance.setName(name.getText());
-                this.performance.setArtist((Artist) artistBox.getSelectedItem());
+                this.performance.setArtists(tempArtistList);
                 this.performance.setStage((Stage) stageBox.getSelectedItem());
                 this.performance.setStartTime(startLocalTime);
                 this.performance.setEndTime(endLocalTime);
@@ -226,9 +248,7 @@ public class PopupWindow extends JDialog {
         // Delete button
         JButton delete = new JButton("Delete");
         delete.addActionListener(e -> {
-            System.out.println(this.schedule.getPerformances().size());
             this.schedule.getPerformances().remove(this.performance);
-            System.out.println(this.schedule.getPerformances().size());
             dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         });
         subPanel.add(delete);
@@ -242,7 +262,7 @@ public class PopupWindow extends JDialog {
     private boolean artistAvailable(Artist artist, LocalTime start, LocalTime end) {
         boolean returnValue = true;
         for (Performance performance1 : this.schedule.getPerformances()) {
-            if (artist == performance1.getArtist() && timeOverlaps(start, end,
+            if (performance1.getArtists().contains(artist) && timeOverlaps(start, end,
                     performance1.getStartTime(), performance1.getEndTime())
                     && performance1 != this.performance) {
                 returnValue = false;
