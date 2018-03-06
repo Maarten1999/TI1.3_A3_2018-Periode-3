@@ -1,5 +1,6 @@
 package agenda.gui;
 
+import agenda.data.Artist;
 import agenda.data.Performance;
 
 import javax.swing.table.AbstractTableModel;
@@ -59,7 +60,12 @@ public class PerformanceModel extends AbstractTableModel {
                 returnValue = performances.get(rowIndex).getName();
                 break;
             case 1:
-                returnValue = performances.get(rowIndex).getArtist().getName();
+                for(int i = 0; i < performances.get(rowIndex).getArtists().size(); i++){
+                    returnValue += performances.get(rowIndex).getArtists().get(i).getName();
+                    if(i != performances.get(rowIndex).getArtists().size() - 1){
+                        returnValue += ", ";
+                    }
+                }
                 break;
             case 2:
                 returnValue = performances.get(rowIndex).getStage().getName();
