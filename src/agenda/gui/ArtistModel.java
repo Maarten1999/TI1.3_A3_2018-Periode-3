@@ -6,13 +6,14 @@ import agenda.data.Schedule;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 
 public class ArtistModel extends AbstractTableModel {
 
     private Schedule schedule;
     private ArtistTab artistTab;
 
-    public ArtistModel(Schedule schedule) {
+    ArtistModel(Schedule schedule) {
         this.schedule = schedule;
     }
 
