@@ -30,7 +30,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
         JButton newButton = new JButton("New Performance");
         newButton.addActionListener(e -> {
             if(schedule.getArtists().size() < 1){
-               JOptionPane.showMessageDialog(null, "You have to first add an artist to the artist table", "Artist table", JOptionPane.ERROR_MESSAGE);
+               JOptionPane.showMessageDialog(null, "There are no artists to add to the performance!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             new PopupWindow(this.schedule);

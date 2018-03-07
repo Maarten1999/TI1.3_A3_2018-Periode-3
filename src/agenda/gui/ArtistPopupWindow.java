@@ -36,7 +36,13 @@ public class ArtistPopupWindow extends JDialog {
         ArrayList<Artist> allArtists = schedule.getArtists();
         allArtistsNames = new JCheckBox[allArtists.size()];
 
-        checkBoxPanel.setLayout(new GridLayout(allArtists.size(), 1));
+        int size = 0;
+        for(Artist a : allArtists){
+            if(!a.getName().isEmpty())
+                size++;
+        }
+
+        checkBoxPanel.setLayout(new GridLayout(size, 1));
 
         for(int i = 0; i < allArtists.size(); i++){
             allArtistsNames[i] = new JCheckBox(allArtists.get(i).getName());
@@ -47,7 +53,8 @@ public class ArtistPopupWindow extends JDialog {
                     }
                 }
             }
-            checkBoxPanel.add(allArtistsNames[i]);
+            if(!allArtists.get(i).getName().isEmpty())
+                checkBoxPanel.add(allArtistsNames[i]);
         }
 
         //Scroller
@@ -80,5 +87,13 @@ public class ArtistPopupWindow extends JDialog {
 
     public ArrayList<Artist> getArtistList() {
         return artistList;
+    }
+
+    public boolean isArtistSelected(){
+        for(JCheckBox jCheckBox : allArtistsNames){
+            if(jCheckBox.isSelected())
+                return true;
+        }
+        return false;
     }
 }

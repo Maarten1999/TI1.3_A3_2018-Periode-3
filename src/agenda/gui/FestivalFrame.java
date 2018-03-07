@@ -30,7 +30,6 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         setResizable(false);
         setLocationRelativeTo(null);
         addWindowFocusListener(this);
-        System.out.println(this.getContentPane().getSize().getWidth());
         // Menu bar
         addMenuBar();
 
@@ -124,7 +123,6 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
                 if(!selectedFile1.getAbsolutePath().endsWith(".ftv"))
                     selectedFile1 = new File(selectedFile1.getName()+".ftv");
                 schedule.setName(selectedFile1.getName());
-                System.out.println("saved as: "+selectedFile1.getName());
                 try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(selectedFile1))){
                     outputStream.writeObject(schedule);
                 }

@@ -7,9 +7,7 @@ import agenda.data.Stage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -22,11 +20,12 @@ public class PopupWindow extends JDialog {
     private Schedule schedule;
     private Performance performance;
     private ArrayList<Artist> tempArtistList;
+    private boolean artistSelected;
 
     public PopupWindow(Schedule schedule, Performance performance) {
-        // Window stuff
         this.schedule = schedule;
         this.performance = performance;
+        this.artistSelected = false;
         setTitle(this.performance.getName());
         JPanel mainPanel = initPanel();
         JPanel subPanel = initSubPanelEdit();
@@ -36,6 +35,7 @@ public class PopupWindow extends JDialog {
 
     public PopupWindow(Schedule schedule) {
         this.schedule = schedule;
+        this.artistSelected = false;
         setTitle("New Performance");
         JPanel mainPanel = initPanel();
         JPanel subPanel = initSubPanelNew();
@@ -71,6 +71,7 @@ public class PopupWindow extends JDialog {
         chooseArtistsButton.addActionListener(e -> {
             ArtistPopupWindow artistPopupWindow = new ArtistPopupWindow(this.schedule, tempArtistList);
             tempArtistList = artistPopupWindow.getArtistList();
+            this.artistSelected = artistPopupWindow.isArtistSelected();
         });
         subPanel.add(chooseArtistsButton);
 
@@ -118,7 +119,13 @@ public class PopupWindow extends JDialog {
             } else if (!isWithinFestivalTime(startLocalTime, endLocalTime)) {
                 JOptionPane.showMessageDialog(this,
                         "The timeframe of the performance is not within the festival timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
+            } else if(!artistSelected) {
+                JOptionPane.showMessageDialog(this,
+                        "There is no artist selected!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if(name.getText().equals("")){
+                JOptionPane.showMessageDialog(this,
+                        "The performance doesn't have a name!", "Error", JOptionPane.ERROR_MESSAGE);
+            }else {
                 if (tempArtistList != null)
                     for (Artist a : tempArtistList) {
                         if (!artistAvailable(a, startLocalTime, endLocalTime)) {
@@ -227,6 +234,12 @@ public class PopupWindow extends JDialog {
             } else if (!isWithinFestivalTime(startLocalTime, endLocalTime)) {
                 JOptionPane.showMessageDialog(this,
                         "The timeframe of the performance is not within the festival timeframe!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if(tempArtistList.size() == 0){
+                JOptionPane.showMessageDialog(this,
+                        "There is no artist selected!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if(name.getText().equals("")){
+                JOptionPane.showMessageDialog(this,
+                        "The performance doesn't have a name!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
             if (tempArtistList != null)
                 for (Artist a : tempArtistList) {

@@ -16,6 +16,7 @@ public class ArtistTab extends JPanel {
     ArtistTab(Schedule schedule) {
         this.schedule = schedule;
         model = new ArtistModel(this.schedule);
+        model.setArtistTab(this);
         setLayout(new BorderLayout());
         initTable();
         initButtons();
