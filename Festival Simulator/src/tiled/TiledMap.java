@@ -32,12 +32,6 @@ public class TiledMap {
         initImages();
     }
 
-    public void draw(Graphics2D g2d) {
-        for (TiledLayer tiledLayer : this.layers) {
-            tiledLayer.draw(g2d);
-        }
-    }
-
     public void draw(Graphics2D g2d, int layer) {
         this.layers.get(layer).draw(g2d);
     }
@@ -72,27 +66,14 @@ public class TiledMap {
                     break;
                 default:
                     int[][] data = new int[height][width];
-                    for (int y = 0; y < height; y++) {
-                        for (int x = 0; x < width; x++) {
-                            int value = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
-                            if (hasBit(value, 32)) {
-                                System.out.println("FLIPPING HECK!");
-                            }
-                            if (hasBit(value, 31)) {
-                                System.out.println("FLIPPING HECK!");
-                            } else {
-                                data[y][x] = value;
-                            }
-                        }
-                    }
+                    JsonArray array = layersTemp.getJsonObject(i).getJsonArray("data");
+                    for (int y = 0; y < height; y++)
+                        for (int x = 0; x < width; x++)
+                            data[y][x] = Math.abs(array.getInt(y * height + x));
                     this.layers.add(new TiledLayer(data, this));
                     break;
             }
         }
-    }
-
-    private boolean hasBit(int n, int k) {
-        return (n >> (k - 1) & 1) == 1;
     }
 
     private void initTiles(JsonObject object) {
@@ -102,11 +83,9 @@ public class TiledMap {
                 String path = tileSets.getJsonObject(i).getString("image");
                 BufferedImage tileSet = ImageIO.read(getClass().getResource("\\..\\tilesets\\" + path));
 
-                for (int y = 0; y < tileSet.getHeight(); y += tileHeight) {
-                    for (int x = 0; x < tileSet.getWidth(); x += tileWidth) {
+                for (int y = 0; y < tileSet.getHeight(); y += tileHeight)
+                    for (int x = 0; x < tileSet.getWidth(); x += tileWidth)
                         this.tiles.add(new TiledTile(tileSet.getSubimage(x, y, tileWidth, tileHeight)));
-                    }
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
