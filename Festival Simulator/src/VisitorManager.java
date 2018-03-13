@@ -21,7 +21,7 @@ public class VisitorManager {
     VisitorManager(TiledMap map, int amountOfVisitors) {
         try {
             this.visitorImage = ImageIO.read(getClass().getResource("/visitor2.png"));
-            this.bloodStain = visitorImage;
+            this.bloodStain = ImageIO.read(getClass().getResource("/blood.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -34,13 +34,16 @@ public class VisitorManager {
     }
 
     public void draw(Graphics2D g2d) {
-        for (Visitor visitor : visitors)
-            visitor.draw(g2d);
+        double rotation = 0;
         for (Point2D stain : this.bloodStains) {
             AffineTransform tx = new AffineTransform();
-            tx.translate(stain.getX(), stain.getY());
+            tx.translate(stain.getX() - this.bloodStain.getWidth() / 2, stain.getY() - this.bloodStain.getHeight() / 2);
+            rotation += 0.1;
+            tx.rotate(rotation, this.bloodStain.getHeight() / 2, this.bloodStain.getWidth() / 2);
             g2d.drawImage(this.bloodStain, tx, null);
         }
+        for (Visitor visitor : visitors)
+            visitor.draw(g2d);
     }
 
     public void update() {
