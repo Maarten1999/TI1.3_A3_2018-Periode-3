@@ -74,13 +74,25 @@ public class TiledMap {
                     int[][] data = new int[height][width];
                     for (int y = 0; y < height; y++) {
                         for (int x = 0; x < width; x++) {
-                            data[y][x] = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
+                            int value = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
+                            if (hasBit(value, 32)) {
+                                System.out.println("FLIPPING HECK!");
+                            }
+                            if (hasBit(value, 31)) {
+                                System.out.println("FLIPPING HECK!");
+                            } else {
+                                data[y][x] = value;
+                            }
                         }
                     }
                     this.layers.add(new TiledLayer(data, this));
                     break;
             }
         }
+    }
+
+    private boolean hasBit(int n, int k) {
+        return (n >> (k - 1) & 1) == 1;
     }
 
     private void initTiles(JsonObject object) {
