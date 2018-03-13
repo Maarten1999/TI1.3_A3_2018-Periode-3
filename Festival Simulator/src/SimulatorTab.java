@@ -16,7 +16,7 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
     private  Point2D  pressedPoint = new Point2D.Double(0,0);
 
     SimulatorTab() {
-        map = new TiledMap(getClass().getResourceAsStream("maps/test2.json"));
+        map = new TiledMap(getClass().getResourceAsStream("maps/test3.json"));
         requestFocus();
         setFocusable(true);
         this.visitorManager = new VisitorManager(this.map, this.amountOfVisitors);

@@ -17,6 +17,8 @@ public class TiledMap {
 
     private ArrayList<TiledTile> tiles = new ArrayList<>();
     private ArrayList<TiledLayer> layers = new ArrayList<>();
+    private boolean[][] collisionMap;
+    private int collisionTile = 305;
 
     public TiledMap(InputStream stream) {
         JsonReader reader;
@@ -45,13 +47,23 @@ public class TiledMap {
 
         JsonArray layersTemp = object.getJsonArray("layers");
         for (int i = 0; i < layersTemp.size(); i++) {
-            int[][] data = new int[height][width];
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    data[y][x] = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
+            if (layersTemp.getJsonObject(i).getString("name").equals("collision")) {
+                this.collisionMap = new boolean[height][width];
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        int value = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
+                        this.collisionMap[y][x] = value == collisionTile;
+                    }
                 }
+            } else if (!layersTemp.getJsonObject(i).getString("name").equals("objects")) {
+                int[][] data = new int[height][width];
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        data[y][x] = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
+                    }
+                }
+                this.layers.add(new TiledLayer(data, this));
             }
-            this.layers.add(new TiledLayer(data, this));
         }
     }
 
