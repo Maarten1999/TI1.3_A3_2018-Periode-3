@@ -1,3 +1,6 @@
+import pathfinding.PathFinding;
+import pathfinding.PathMap;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -25,10 +28,11 @@ public class Visitor {
     Visitor(BufferedImage image, int width, int height) {
         this.image = image;
         this.size = image.getHeight();
-        position = new Point2D.Double(this.size / 2 + Math.random() * (width - this.size),
-                this.size / 2 + Math.random() * (height - this.size));
+        //position = new Point2D.Double(this.size / 2 + Math.random() * (width - this.size),
+                //this.size / 2 + Math.random() * (height - this.size));
+        position = new Point(17 * 32, 1 * 32);
         angle = Math.random() * 2 * Math.PI;
-        speed = 3 + 4 * Math.random();
+        speed = 3;// + 4 * Math.random();
         this.width = width;
         this.height = height;
     }
@@ -38,14 +42,40 @@ public class Visitor {
         tx.translate(position.getX() - image.getWidth() / 2, position.getY() - image.getHeight() / 2);
         tx.rotate(angle, image.getWidth() / 2, image.getHeight() / 2);
         g2d.drawImage(image, tx, null);
+
+        if(togo != null){
+            g2d.setColor(Color.red);
+            Point prevp = togo[0];
+
+            for (Point p: togo) {
+                g2d.drawLine(prevp.x * 32 + 16, prevp.y * 32 + 16, p.x * 32 + 16, p.y * 32 + 16);
+                prevp = p;
+            }
+
+            g2d.fillRect((int)position.getX() + (int)diffs.x - 8,  (int)position.getY() + (int)diffs.y - 8, 16, 16);
+        }
     }
+
+    Point[] togo;
+
+    Point diffs;
 
     public void update(ArrayList<Visitor> visitors) {
 
+        if(p == null)
+            return;
+
+        Point[] togo = p.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32));
+
+        if(togo != null)
+            togo = this.togo;
+
         Point2D diff = new Point2D.Double(
-                targetPosition.getX() - position.getX(),
-                targetPosition.getY() - position.getY()
+                ((togo[0].getX() * 32 + 16) - position.getX()),
+                ((togo[0].getY() * 32 + 16) - position.getY())
         );
+
+        diffs = new Point((int)diff.getX(), (int)diff.getY());
 
         double targetAngle = Math.atan2(diff.getY(), diff.getX());
 
@@ -56,9 +86,9 @@ public class Visitor {
             angleDiff -= 2 * Math.PI;
 
         if (angleDiff < 0)
-            angle += 0.1;
+            angle += 0.21;
         else if (angleDiff > 0)
-            angle -= 0.1;
+            angle -= 0.21;
 
 
         Point2D lastPosition = position;
@@ -70,8 +100,10 @@ public class Visitor {
 
         if (hasCollision) {
             position = lastPosition;
-            angle += 0.2;
+            angle += 0.3;
         }
+
+        this.togo = togo;
     }
 
     public boolean hasCollision(ArrayList<Visitor> visitors) {
@@ -111,9 +143,11 @@ public class Visitor {
         return outOfBounds;
     }
 
+    private PathMap p;
 
     public void setTarget(Point2D targetPosition) {
         this.targetPosition = targetPosition;
+        p = PathFinding.instance().getPathMap(targetPosition.toString());
     }
 
     private boolean dealDamage(int damage) {
