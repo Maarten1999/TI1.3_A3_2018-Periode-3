@@ -1,5 +1,6 @@
 package simulator.map;
 
+import agenda.data.Stage;
 import simulator.pathfinding.PathFinding;
 
 import javax.imageio.ImageIO;
@@ -24,8 +25,10 @@ public class TiledMap {
     private ArrayList<TiledTile> tiles = new ArrayList<>();
     private ArrayList<TiledLayer> layers = new ArrayList<>();
     private ArrayList<Target> targets = new ArrayList<>();
+    private ArrayList<Stage> stages = new ArrayList<>();
     private boolean[][] collisionMap;
-    private int collisionTile = 305;
+    private int collisionTile1 = 311;
+    private int collisionTile2 = 801;
 
     public TiledMap(InputStream stream) {
         JsonReader reader;
@@ -60,8 +63,8 @@ public class TiledMap {
                     this.collisionMap = new boolean[height][width];
                     for (int y = 0; y < height; y++) {
                         for (int x = 0; x < width; x++) {
-                            int value = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
-                            this.collisionMap[y][x] = value == collisionTile;
+                            int value = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * width + x);
+                            this.collisionMap[y][x] = !((value == collisionTile1) || (value == collisionTile2));
                         }
                     }
                     break;
@@ -73,14 +76,20 @@ public class TiledMap {
                                 (target.getInt("y") + target.getInt("height") / 2) / tileHeight);
                         String name = target.getString("name");
                         this.targets.add(new Target(name, point));
+                        if(target.getString("type").equals("Stage")){
+                            stages.add(new Stage(name, target.getJsonObject("properties").getInt("capacity"),
+                                    new Point(target.getJsonObject("properties").getInt("EntranceX"),target.getJsonObject("properties").getInt("EntranceY")),
+                                    new Point(target.getJsonObject("properties").getInt("ExitX"),target.getJsonObject("properties").getInt("ExitY"))));
+                        }
                     }
+                    System.out.println(stages);
                     break;
                 default:
                     int[][] data = new int[height][width];
                     JsonArray array = layersTemp.getJsonObject(i).getJsonArray("data");
                     for (int y = 0; y < height; y++)
                         for (int x = 0; x < width; x++)
-                            data[y][x] = Math.abs(array.getInt(y * height + x));
+                            data[y][x] = Math.abs(array.getInt(y * width + x));
                     this.layers.add(new TiledLayer(data, this));
                     break;
             }
@@ -121,11 +130,11 @@ public class TiledMap {
 
     public int getWidth() {
         return width;
-    }
+    }//number of tiles horizontal
 
     public int getHeight() {
         return height;
-    }
+    }//number of tiles vertical
     public int getActualWidth() {
         return actualWidth;
     }
@@ -141,4 +150,6 @@ public class TiledMap {
     public int getLayerCount() {
         return layers.size();
     }
+
+    public ArrayList<Stage> getStages() { return stages; }
 }

@@ -2,6 +2,7 @@ package agenda.gui;
 
 import agenda.data.Schedule;
 import agenda.data.Stage;
+import simulator.map.TiledMap;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -22,7 +23,6 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
     public FestivalFrame() {
         //Make test schedule
         this.schedule = new Schedule();
-        addMockStages();
         setTitle(this.schedule.getName());
 
         // Window settings
@@ -46,7 +46,7 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         tabs.addTab("Performances", this.performanceTab);
         this.artistTab = new ArtistTab(schedule);
         tabs.addTab("Artists", this.artistTab);
-        this.simulatorTab = new SimulatorTab(1280, 720);
+        this.simulatorTab = new SimulatorTab(1280, 720);//1280 720
         tabs.addTab("Simulator", this.simulatorTab);
         add(tabs);
         tabs.addChangeListener(e -> {
@@ -62,7 +62,7 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
                     break;
             }
         });
-
+        addMockStages();
         setVisible(true);
     }
 
@@ -75,8 +75,8 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
 
     private void addMockStages(){
-        for (int i = 0; i < 6; i++) {
-            this.schedule.addStage(new Stage("Stage " + (i + 1), 500));
+        for (Stage stage : this.simulatorTab.getMap().getStages()) {
+            this.schedule.addStage(stage);
         }
     }
 
