@@ -92,11 +92,14 @@ public class TiledMap {
                 for (int y = 0; y < tileSet.getHeight(); y += tileHeight) {
                     for (int x = 0; x < tileSet.getWidth(); x += tileWidth) {
                         this.tiles.add(new TiledTile(tileSet.getSubimage(x, y, tileWidth, tileHeight)));
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private void initImages() {
         for (TiledLayer layer : this.layers) {

@@ -6,7 +6,7 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
-public class SimulatorTab extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
+public class SimulatorTab extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
     private VisitorManager visitorManager;
     private int windowWidth, windowHeight;
@@ -29,15 +29,23 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
         addMouseWheelListener(this);
         new Timer(1000/60, this).start();
         addMouseMotionListener(this);
-        addKeyListener(this);
 
 
-        //camera.translate(0,-720);
         camera.translate(this.windowWidth /2-map.getActualWidth()/2, this.windowHeight /2-map.getActualHeight()/2);
         camera.centerZoom(this.windowWidth /2, this.windowHeight /2);
         camera.zoom(this.windowWidth /((double) this.windowHeight));
-        System.out.println(camera.getZoom());
-        System.out.println(this.windowWidth /((double) this.windowHeight));
+
+
+        getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_W,0), "train");
+        getActionMap().put("train", new AbstractAction() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               if (train == null) {
+                   train = new Train(map.getWidth() * map.getTileSize(), -200,
+                           (int) (100 + Math.random() * (map.getHeight() * map.getTileSize() - 200)), 10);
+               }
+           }
+        });
     }
 
     @Override
@@ -87,22 +95,6 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
                 e1.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_W && this.train == null) {
-            this.train = new Train(this.map.getWidth() * this.map.getTileSize(), -200,
-                    (int) (100 + Math.random() * (this.map.getHeight() * this.map.getTileSize() - 200)), 10);
-        }
-    }
-
-    public void keyTyped(KeyEvent e) {
-    }
-
-
-
-    public void keyReleased(KeyEvent e) {
     }
 
 
