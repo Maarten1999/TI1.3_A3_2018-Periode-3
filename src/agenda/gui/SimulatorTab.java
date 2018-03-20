@@ -8,12 +8,13 @@ import java.awt.event.KeyEvent;
 
 public class SimulatorTab extends JPanel {
 
+
     private SimulatorPanel simulatorPanel;
     private ToolPanel toolPanel;
 
     SimulatorTab() {
         setLayout(new BorderLayout());
-        simulatorPanel = new SimulatorPanel(1280, 720);
+        simulatorPanel = new SimulatorPanel();
         toolPanel = new ToolPanel(simulatorPanel);
         add(simulatorPanel, BorderLayout.CENTER);
         add(toolPanel, BorderLayout.EAST);
@@ -21,5 +22,9 @@ public class SimulatorTab extends JPanel {
 
     public void keyPressed(KeyEvent e) {
         simulatorPanel.keyPressed(e);
+    }
+
+    public SimulatorPanel getSimulatorPanel() {
+        return simulatorPanel;
     }
 }

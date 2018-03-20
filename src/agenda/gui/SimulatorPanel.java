@@ -18,6 +18,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
 
     private VisitorManager visitorManager;
     private int windowWidth, windowHeight;
+
     private TiledMap map;
     private Timer timer;
     private Train train;
@@ -26,7 +27,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
     private Point2D previousMouseCoordinates;
 
     SimulatorPanel() {
-        map = new TiledMap(getClass().getResourceAsStream("\\..\\..\\maps\\test3.json"));
+        map = new TiledMap(getClass().getResourceAsStream("\\..\\..\\maps\\festivalMap.json"));
         this.visitorManager = new VisitorManager(this.map, this.amountOfVisitors);
         camera = new Camera();
         setBackground(new Color(60, 100, 40));
@@ -56,19 +57,13 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
         AffineTransform prevTrans = g2d.getTransform();
         g2d.setTransform(camera.getTransform());
         int layerCount = this.map.getLayerCount();
-        this.map.draw(g2d, 0);
-        if (layerCount >= 2)
-            this.map.draw(g2d, 1);
+        for (int i = 0; i <= layerCount - 1; i++) {
+            this.map.draw(g2d, i);
+        }
         this.visitorManager.draw(g2d);
         if (this.train != null)
             this.train.draw(g2d);
-
-        // paints remaining layers (layer 0 and 1 are ground and path)
-        if (layerCount >= 3) {
-            for (int i = 2; i <= layerCount - 1; i++) {
-                this.map.draw(g2d, i);
-            }
-        }
+        
         g2d.setTransform(prevTrans);
     }
 
@@ -129,7 +124,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         double unitScroll = (-e.getUnitsToScroll() / 9.0);
-        if (camera.getZoom() + unitScroll >= 1 && camera.getZoom() + unitScroll < 5) {
+        if (camera.getZoom() + unitScroll >= 0.4 && camera.getZoom() + unitScroll < 5) {
             camera.zoom(-(e.getUnitsToScroll()) / 9.0);
             Point2D centerZoom = null;
             try {
@@ -179,4 +174,6 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
     public void setWindowHeight(int windowHeight) {
         this.windowHeight = windowHeight;
     }
+
+    public TiledMap getMap() { return map; }
 }

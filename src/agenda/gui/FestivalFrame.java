@@ -90,7 +90,7 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
 
     private void addMockStages(){
-        for (Stage stage : this.simulatorTab.getMap().getStages()) {
+        for (Stage stage : this.simulatorTab.getSimulatorPanel().getMap().getStages()) {
             this.schedule.addStage(stage);
         }
     }
