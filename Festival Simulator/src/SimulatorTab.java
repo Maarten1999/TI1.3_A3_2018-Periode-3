@@ -1,3 +1,5 @@
+import pathfinding.PathFinding;
+import pathfinding.PathMap;
 import tiled.TiledMap;
 
 import javax.swing.*;
@@ -15,6 +17,8 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
     private Camera camera;
     private  Point2D  pressedPoint = new Point2D.Double(0,0);
 
+    private PathMap testMap;
+
     SimulatorTab() {
         map = new TiledMap(getClass().getResourceAsStream("maps/test3.json"));
         requestFocus();
@@ -26,6 +30,8 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
         new Timer(1000/60, this).start();
         addMouseMotionListener(this);
         addKeyListener(this);
+        PathFinding.instance().generateMap("test", new Point(map.getWidth()-1, map.getHeight()-1));
+        testMap = PathFinding.instance().getPathMap("test");
     }
 
     @Override
@@ -37,6 +43,7 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
         this.map.draw(g2d, 0);
         if (layerCount >= 2)
             this.map.draw(g2d, 1);
+        testMap.drawMap(g2d);
         this.visitorManager.draw(g2d);
 
         if (this.train != null)

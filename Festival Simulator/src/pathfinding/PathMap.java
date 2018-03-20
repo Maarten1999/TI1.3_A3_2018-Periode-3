@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 public class PathMap {
 
-//    public final int TILE_SIZE = 32;//debug variable
+    public final int TILE_SIZE = 32;//debug variable
 
     private String name;
     private Point size;
@@ -23,7 +23,7 @@ public class PathMap {
     public PathMap(String name, Point startPoint, boolean [][] map){
 
         this.name = name;//set name
-        size = new Point(map.length, map[0].length);//set map sizes
+        size = new Point(map[0].length, map.length);//set map sizes
         step = 0;//debug value for checking the step
 
         succesfulCreated = CheckIfStartPointIsValid(startPoint, map);//check if start point is valid
@@ -59,7 +59,7 @@ public class PathMap {
         for(int x = 0; x < size.x; x++){
             for(int y = 0; y < size.y; y++){
                 if(!mapData[x][y])
-                    map[x][y] = new PathNode();
+                    map[y][x] = new PathNode();
             }
         }
     }
@@ -153,19 +153,19 @@ public class PathMap {
     }
 
 
-//    public void drawMap(Graphics2D g2d){
-//        for(int x = 0; x < size.x; x++){
-//            for(int y = 0; y < size.y; y++){
-//                if(map[x][y] != null)
-//                {
-//                    int xPos = x * TILE_SIZE;
-//                    int yPos = y * TILE_SIZE;
-//                    g2d.setColor((map[x][y].isActivated)? Color.GREEN : Color.red);
-//                    g2d.fillRect(xPos, yPos, TILE_SIZE, TILE_SIZE);
-//                    g2d.setColor(Color.white);
-//                    g2d.drawString(map[x][y].step + "", xPos + 16, yPos+16);
-//                }
-//            }
-//        }
-//    }
+    public void drawMap(Graphics2D g2d){
+        for(int x = 0; x < size.x; x++){
+            for(int y = 0; y < size.y; y++){
+                if(map[x][y] != null)
+                {
+                    int xPos = x * TILE_SIZE;
+                    int yPos = y * TILE_SIZE;
+                    g2d.setColor((map[x][y].isActivated)? Color.GREEN : Color.red);
+                    g2d.fillRect(xPos, yPos, TILE_SIZE, TILE_SIZE);
+                    g2d.setColor(Color.white);
+                    g2d.drawString(map[x][y].step + "", xPos + 16, yPos+16);
+                }
+            }
+        }
+    }
 }
