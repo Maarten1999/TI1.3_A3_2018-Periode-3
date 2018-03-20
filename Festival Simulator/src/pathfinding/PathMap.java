@@ -58,7 +58,7 @@ public class PathMap {
 
         for(int x = 0; x < size.x; x++){
             for(int y = 0; y < size.y; y++){
-                if(mapData[x][y])
+                if(!mapData[x][y])
                     map[x][y] = new PathNode();
             }
         }

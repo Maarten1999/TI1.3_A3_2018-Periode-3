@@ -1,5 +1,7 @@
 package tiled;
 
+import pathfinding.PathFinding;
+
 import javax.imageio.ImageIO;
 import javax.json.*;
 import java.awt.*;
@@ -31,6 +33,9 @@ public class TiledMap {
         initLayers(object);
         initTiles(object);
         initImages();
+
+        //init pathfinding map
+        PathFinding.initialize(collisionMap);
     }
 
     public void draw(Graphics2D g2d, int layer) {

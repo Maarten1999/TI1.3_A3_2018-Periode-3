@@ -1,5 +1,7 @@
 package tiled;
 
+import pathfinding.PathFinding;
+
 import java.awt.*;
 
 public class Target {
@@ -10,6 +12,8 @@ public class Target {
     public Target(String name, Point targetPoint) {
         this.name = name;
         this.targetPoint = targetPoint;
+        //example
+        //PathFinding.instance().generateMap(name, targetPoint);
     }
 
     public String getName() {
