@@ -7,6 +7,8 @@ import simulator.map.TiledMap;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.*;
@@ -14,6 +16,7 @@ import java.io.*;
 public class FestivalFrame extends JFrame implements WindowFocusListener {
 
     private Schedule schedule;
+    private JTabbedPane tabs;
     private ScheduleTab scheduleTab;
     private PerformanceTab performanceTab;
     private ArtistTab artistTab;
@@ -38,15 +41,18 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         // File chooser
         addFileChooser();
 
+        //Keyboard bindings
+        addKeyBoardBindings();
+
         // Tabs
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
         this.scheduleTab = new ScheduleTab(schedule);
         tabs.addTab("Schedule", this.scheduleTab);
         this.performanceTab = new PerformanceTab(schedule);
         tabs.addTab("Performances", this.performanceTab);
         this.artistTab = new ArtistTab(schedule);
         tabs.addTab("Artists", this.artistTab);
-        this.simulatorTab = new SimulatorTab(1280, 720);//1280 720
+        this.simulatorTab = new SimulatorTab();
         tabs.addTab("Simulator", this.simulatorTab);
         add(tabs);
         tabs.addChangeListener(e -> {
@@ -57,13 +63,22 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
                 case 1:
                     this.performanceTab.refresh();
                     break;
-                case 3:
-                    this.simulatorTab.requestFocusInWindow();
-                    break;
             }
         });
         addMockStages();
         setVisible(true);
+        setFocusable(true);
+        requestFocusInWindow();
+        requestFocus();
+    }
+
+    private void addKeyBoardBindings() {
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (tabs.getSelectedIndex() == 3)
+                    simulatorTab.keyPressed(e);
+            }
+        });
     }
 
     private void addFileChooser() {
