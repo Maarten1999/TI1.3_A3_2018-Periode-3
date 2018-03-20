@@ -14,6 +14,7 @@ public class TiledMap {
     private int height;
     private int tileHeight;
     private int tileWidth;
+    private int actualWidth, actualHeight;
 
     private ArrayList<TiledTile> tiles = new ArrayList<>();
     private ArrayList<TiledLayer> layers = new ArrayList<>();
@@ -42,6 +43,8 @@ public class TiledMap {
         this.tileHeight = object.getInt("tileheight");
         this.tileWidth = object.getInt("tilewidth");
 
+        this.actualWidth = object.getInt("tilewidth")* width;
+        this.actualHeight = object.getInt("tileheight")* height;
         JsonArray layersTemp = object.getJsonArray("layers");
         for (int i = 0; i < layersTemp.size(); i++) {
             switch (layersTemp.getJsonObject(i).getString("name")) {
@@ -83,8 +86,11 @@ public class TiledMap {
                 String path = tileSets.getJsonObject(i).getString("image");
                 BufferedImage tileSet = ImageIO.read(getClass().getResource("\\..\\tilesets\\" + path));
 
-                for (int y = 0; y < tileSet.getHeight(); y += tileHeight)
-                    for (int x = 0; x < tileSet.getWidth(); x += tileWidth)
+                this.tileHeight = tileSets.getJsonObject(i).getInt("tileheight");
+                this.tileWidth = tileSets.getJsonObject(i).getInt("tilewidth");
+
+                for (int y = 0; y < tileSet.getHeight(); y += tileHeight) {
+                    for (int x = 0; x < tileSet.getWidth(); x += tileWidth) {
                         this.tiles.add(new TiledTile(tileSet.getSubimage(x, y, tileWidth, tileHeight)));
             }
         } catch (IOException e) {
@@ -108,6 +114,13 @@ public class TiledMap {
 
     public int getHeight() {
         return height;
+    }
+    public int getActualWidth() {
+        return actualWidth;
+    }
+
+    public int getActualHeight() {
+        return actualHeight;
     }
 
     public int getTileSize() {
