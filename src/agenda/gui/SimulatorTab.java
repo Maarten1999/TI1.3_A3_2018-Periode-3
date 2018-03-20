@@ -1,9 +1,16 @@
-import tiled.TiledMap;
+package agenda.gui;
+
+import simulator.Camera;
+import simulator.Train;
+import simulator.Visitor;
+import simulator.VisitorManager;
+import simulator.map.TiledMap;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class SimulatorTab extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener {

@@ -12,10 +12,11 @@ import java.io.*;
 
 public class FestivalFrame extends JFrame implements WindowFocusListener {
 
-    private PerformanceTab performanceTab;
     private Schedule schedule;
-    private ArtistTab artistTab;
     private ScheduleTab scheduleTab;
+    private PerformanceTab performanceTab;
+    private ArtistTab artistTab;
+    private SimulatorTab simulatorTab;
     private JFileChooser fileChooser;
 
     public FestivalFrame() {
@@ -30,6 +31,7 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         setResizable(false);
         setLocationRelativeTo(null);
         addWindowFocusListener(this);
+
         // Menu bar
         addMenuBar();
 
@@ -44,6 +46,8 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         tabs.addTab("Performances", this.performanceTab);
         this.artistTab = new ArtistTab(schedule);
         tabs.addTab("Artists", this.artistTab);
+        this.simulatorTab = new SimulatorTab(1280, 720);
+        tabs.addTab("Simulator", this.simulatorTab);
         add(tabs);
         tabs.addChangeListener(e -> {
             switch (tabs.getSelectedIndex()) {
@@ -53,11 +57,13 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
                 case 1:
                     this.performanceTab.refresh();
                     break;
+                case 3:
+                    this.simulatorTab.requestFocusInWindow();
+                    break;
             }
         });
 
         setVisible(true);
-
     }
 
     private void addFileChooser() {
@@ -144,8 +150,4 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
     @Override
     public void windowLostFocus(WindowEvent e) {}
-
-    public Schedule getSchedule() {
-        return schedule;
-    }
 }

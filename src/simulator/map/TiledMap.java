@@ -1,9 +1,12 @@
-package tiled;
+package simulator.map;
 
-import pathfinding.PathFinding;
+import simulator.pathfinding.PathFinding;
 
 import javax.imageio.ImageIO;
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -89,7 +92,7 @@ public class TiledMap {
             JsonArray tileSets = object.getJsonArray("tilesets");
             for (int i = 0; i < tileSets.size(); i++) {
                 String path = tileSets.getJsonObject(i).getString("image");
-                BufferedImage tileSet = ImageIO.read(getClass().getResource("\\..\\tilesets\\" + path));
+                BufferedImage tileSet = ImageIO.read(getClass().getResource("\\..\\..\\tilesets\\" + path));
 
                 this.tileHeight = tileSets.getJsonObject(i).getInt("tileheight");
                 this.tileWidth = tileSets.getJsonObject(i).getInt("tilewidth");

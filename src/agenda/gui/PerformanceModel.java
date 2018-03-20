@@ -1,6 +1,5 @@
 package agenda.gui;
 
-import agenda.data.Artist;
 import agenda.data.Performance;
 
 import javax.swing.table.AbstractTableModel;

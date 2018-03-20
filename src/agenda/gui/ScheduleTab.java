@@ -1,6 +1,5 @@
 package agenda.gui;
 
-import agenda.data.Artist;
 import agenda.data.Performance;
 import agenda.data.Schedule;
 import agenda.data.Stage;
@@ -13,7 +12,6 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class ScheduleTab extends JPanel implements MouseListener {

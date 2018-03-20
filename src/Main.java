@@ -1,5 +1,3 @@
-package agenda;
-
 import agenda.gui.FestivalFrame;
 
 public class Main {
