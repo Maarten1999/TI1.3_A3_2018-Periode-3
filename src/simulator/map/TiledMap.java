@@ -60,7 +60,7 @@ public class TiledMap {
                     this.collisionMap = new boolean[height][width];
                     for (int y = 0; y < height; y++) {
                         for (int x = 0; x < width; x++) {
-                            int value = layersTemp.getJsonObject(i).getJsonArray("agenda/data").getInt(y * height + x);
+                            int value = layersTemp.getJsonObject(i).getJsonArray("data").getInt(y * height + x);
                             this.collisionMap[y][x] = value == collisionTile;
                         }
                     }
@@ -77,7 +77,7 @@ public class TiledMap {
                     break;
                 default:
                     int[][] data = new int[height][width];
-                    JsonArray array = layersTemp.getJsonObject(i).getJsonArray("agenda/data");
+                    JsonArray array = layersTemp.getJsonObject(i).getJsonArray("data");
                     for (int y = 0; y < height; y++)
                         for (int x = 0; x < width; x++)
                             data[y][x] = Math.abs(array.getInt(y * height + x));

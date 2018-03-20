@@ -27,6 +27,8 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
 
+        // out/production/Festival Planner/agenda/gui/SimulatorTab.class
+        // out/production/Festival Planner/maps/test3.json
         map = new TiledMap(getClass().getResourceAsStream("\\..\\..\\maps\\test3.json"));
         this.visitorManager = new VisitorManager(this.map, this.amountOfVisitors);
         camera = new Camera();
