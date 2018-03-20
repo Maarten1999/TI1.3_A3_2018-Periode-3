@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="javax.json-1.0" level="project" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="dyn4j-v3.2.4" level="project" />
   </component>
 </module>

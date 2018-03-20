@@ -1,5 +1,13 @@
 package simulator;
 
+import com.sun.xml.internal.ws.client.sei.ResponseBuilder;
+import org.dyn4j.dynamics.Body;
+import org.dyn4j.geometry.Vector2;
+import simulator.Physics.PhysicsWorld;
+import simulator.map.Target;
+import simulator.pathfinding.PathFinding;
+import simulator.pathfinding.PathMap;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -23,6 +31,10 @@ public class Visitor {
     private int size;
     private boolean circle;
     private int killedVisitor;
+    private Body body;
+    private Point2D lastPosition;
+    private PathMap map;
+    private Point[] route;
 
     Visitor(BufferedImage image, int width, int height) {
         this.image = image;
@@ -30,9 +42,11 @@ public class Visitor {
         position = new Point2D.Double(this.size / 2 + Math.random() * (width - this.size),
                 this.size / 2 + Math.random() * (height - this.size));
         angle = Math.random() * 2 * Math.PI;
-        speed = 3 + 4 * Math.random();
+        speed = 7 + 4 * Math.random();
         this.width = width;
         this.height = height;
+        body = PhysicsWorld.getInstance().getBody(position);
+        lastPosition = position;
     }
 
     public void draw(Graphics2D g2d) {
@@ -40,66 +54,74 @@ public class Visitor {
         tx.translate(position.getX() - image.getWidth() / 2, position.getY() - image.getHeight() / 2);
         tx.rotate(angle, image.getWidth() / 2, image.getHeight() / 2);
         g2d.drawImage(image, tx, null);
-    }
 
-    public void update(ArrayList<Visitor> visitors) {
-
-        Point2D diff = new Point2D.Double(
-                targetPosition.getX() - position.getX(),
-                targetPosition.getY() - position.getY()
-        );
-
-        double targetAngle = Math.atan2(diff.getY(), diff.getX());
-
-        double angleDiff = angle - targetAngle;
-        while (angleDiff < -Math.PI)
-            angleDiff += 2 * Math.PI;
-        while (angleDiff > Math.PI)
-            angleDiff -= 2 * Math.PI;
-
-        if (angleDiff < 0)
-            angle += 0.1;
-        else if (angleDiff > 0)
-            angle -= 0.1;
-
-
-        Point2D lastPosition = position;
-        position = new Point2D.Double(
-                position.getX() + speed * Math.cos(angle),
-                position.getY() + speed * Math.sin(angle));
-
-        boolean hasCollision = hasCollision(visitors) || isWithinMapBounds();
-
-        if (hasCollision) {
-            position = lastPosition;
-            angle += 0.2;
-        }
-    }
-
-    public boolean hasCollision(ArrayList<Visitor> visitors) {
-        boolean hasCollision = false;
-
-        for (int i = 0; i < visitors.size(); i++) {
-            if (visitors.get(i) == this)
-                continue;
-            double distance = position.distance(visitors.get(i).position);
-            if (distance < this.size) {
-                this.collisionTime++;
-                hasCollision = true;
-
-                // Punching mechanics
-                if (this.collisionTime >= this.punchingTime) {
-                    this.collisionTime = this.punchingTime - 20;
-                    if (visitors.get(i).dealDamage(this.damage)) {
-                        this.killedVisitor = i;
-                    }
-                }
+        if(route != null)
+        {
+            Point prevP = position;
+            for (Point p : route) {
+                g2d.setColor(Color.RED);
+                g2d.drawLine((int)prevP.getX() * 32 + 16, (int)prevP.getY() * 32 + 16,
+                        (int)p.getX() * 32 + 16, (int)p.getY() * 32 + 16);
+                prevP = p;
             }
         }
-        if (!hasCollision)
-            this.collisionTime = 0;
-        return hasCollision;
     }
+
+    public void update() {
+        Vector2 v = body.getTransform().getTranslation();
+        position = new Point2D.Double(v.x, v.y);
+
+        Point2D diff2 = new Point2D.Double(
+                lastPosition.getX() - position.getX(),
+                lastPosition.getY() - position.getY()
+        );
+
+        if(map == null)
+            return;
+
+        Point[] p = map.getRoute(new Point((int) position.getX() / 32, (int) position.getY() / 32));
+
+        if(p != null)
+            route = p;
+        else if (route == null)
+            return;
+
+
+        Point2D diff = new Point2D.Double(
+                route[0].getX() * 32 - position.getX(),
+                route[0].getY() * 32 - position.getY()
+        );
+
+        double sangle = Math.atan2(diff.getY(), diff.getX());
+        body.setLinearVelocity(speed * Math.cos(sangle), speed * Math.sin(sangle));
+        angle = Math.toRadians(180) + Math.atan2(diff2.getY(), diff2.getX());
+        lastPosition = position;
+    }
+//
+//    public boolean hasCollision(ArrayList<Visitor> visitors) {
+//        boolean hasCollision = false;
+//
+//        for (int i = 0; i < visitors.size(); i++) {
+//            if (visitors.get(i) == this)
+//                continue;
+//            double distance = position.distance(visitors.get(i).position);
+//            if (distance < this.size) {
+//                this.collisionTime++;
+//                hasCollision = true;
+//
+//                // Punching mechanics
+//                if (this.collisionTime >= this.punchingTime) {
+//                    this.collisionTime = this.punchingTime - 20;
+//                    if (visitors.get(i).dealDamage(this.damage)) {
+//                        this.killedVisitor = i;
+//                    }
+//                }
+//            }
+//        }
+//        if (!hasCollision)
+//            this.collisionTime = 0;
+//        return hasCollision;
+//    }
 
     private boolean isWithinMapBounds() {
         boolean outOfBounds = false;
@@ -114,8 +136,14 @@ public class Visitor {
     }
 
 
+    public void onRemove(){
+        PhysicsWorld.getInstance().removeBody(body);
+    }
+
     public void setTarget(Point2D targetPosition) {
         this.targetPosition = targetPosition;
+
+        map = PathFinding.instance().getPathMap(targetPosition.toString());
     }
 
     private boolean dealDamage(int damage) {

@@ -1,10 +1,12 @@
 package agenda.gui;
 
 import simulator.Camera;
+import simulator.Physics.PhysicsWorld;
 import simulator.Train;
 import simulator.Visitor;
 import simulator.VisitorManager;
 import simulator.map.TiledMap;
+import simulator.pathfinding.PathFinding;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +24,7 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
     private int amountOfVisitors = 100;
     private Camera camera;
     private Point2D previousMouseCoordinates;
+    private Point pathCoord;
 
     SimulatorTab(int windowWidth, int windowHeight) {
         this.windowWidth = windowWidth;
@@ -30,6 +33,7 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
         // out/production/Festival Planner/agenda/gui/SimulatorTab.class
         // out/production/Festival Planner/maps/test3.json
         map = new TiledMap(getClass().getResourceAsStream("\\..\\..\\maps\\test3.json"));
+        PhysicsWorld.initialize(new Point(map.getWidth(), map.getHeight()));
         this.visitorManager = new VisitorManager(this.map, this.amountOfVisitors);
         camera = new Camera();
         setBackground(new Color(60, 100, 40));
@@ -66,6 +70,11 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
         if (this.train != null)
             this.train.draw(g2d);
 
+        //PhysicsWorld.getInstance().draw(g2d, 1);
+        if(pathCoord != null) {
+            g2d.setColor(Color.cyan);
+            g2d.drawRect((int)pathCoord.getX() * 32, (int)pathCoord.getY() * 32, 32, 32);
+        }
         // paints remaining layers (layer 0 and 1 are ground and path)
         if (layerCount >= 3) {
             for (int i = 2; i <= layerCount - 1; i++) {
@@ -77,14 +86,17 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
     @Override
     public void actionPerformed(ActionEvent e) {
         this.visitorManager.update();
+
         if (this.train != null) {
             this.train.update(this.visitorManager);
             if (this.train.isFinished())
                 this.train = null;
         }
+
         if (this.amountOfVisitors > this.visitorManager.getVisitors().size()) {
             this.visitorManager.addVisitor();
         }
+        PhysicsWorld.getInstance().update();
         repaint();
     }
 
@@ -143,7 +155,24 @@ public class SimulatorTab extends JPanel implements ActionListener, MouseListene
         }
     }
 
-    public void mouseClicked(MouseEvent e) {}
+    Point m;
+
+    public void mouseClicked(MouseEvent e) {
+        Point2D n = new Point2D.Double(0, 0);
+        try {
+        n = camera.getTransform().inverseTransform(e.getPoint(), null);
+    } catch (NoninvertibleTransformException e1) {
+        e1.printStackTrace();
+    }
+        if(e.getButton() == MouseEvent.BUTTON3) {
+            pathCoord = new Point((int) n.getX() / 32, (int) n.getY() / 32);
+            PathFinding.instance().generateMap(pathCoord.toString(), pathCoord);
+            for(Visitor v : visitorManager.getVisitors()) {
+                v.setTarget(pathCoord);
+            }
+        }
+    }
+
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
 }

@@ -50,7 +50,7 @@ public class VisitorManager {
 
     public void update() {
         for (int i = 0; i < this.visitors.size(); i++) {
-            visitors.get(i).update(visitors);
+            visitors.get(i).update();
         }
     }
 
@@ -61,12 +61,13 @@ public class VisitorManager {
     public void addVisitor() {
         Visitor visitor = new Visitor(this.visitorImage, this.width * this.tileSize,
                 this.height * this.tileSize);
-        if (!visitor.hasCollision(visitors))
+//        if (!visitor.hasCollision(visitors))
             visitors.add(visitor);
     }
 
     public void removeVisitor(int index) {
         this.bloodStains.add(this.visitors.get(index).getPosition());
+        visitors.get(index).onRemove();
         this.visitors.remove(index);
     }
 }
