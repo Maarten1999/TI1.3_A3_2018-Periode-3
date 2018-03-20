@@ -4,11 +4,22 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class PathFinding {
+    private static PathFinding instance;
+
+    public static void initialize(boolean[][] map){
+        if(instance == null)
+            instance = new PathFinding(map);
+    }
+
+    public static PathFinding instance(){
+        return instance;
+    }
+
     private boolean[][] map;
 
     private HashMap<String, PathMap> mapList;
 
-    public PathFinding(boolean[][] map){
+    private PathFinding(boolean[][] map){
         this.map = map;
         mapList = new HashMap<>();
     }
