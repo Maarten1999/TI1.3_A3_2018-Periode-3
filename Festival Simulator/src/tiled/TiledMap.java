@@ -34,7 +34,7 @@ public class TiledMap {
         initImages();
 
         //init pathfinding map
-        PathFinding.initialize(new boolean[width][height]);
+        PathFinding.initialize(collisionMap);
     }
 
     public void draw(Graphics2D g2d, int layer) {
