@@ -57,6 +57,14 @@ public class Stage extends Target implements Serializable {
 
     @Override
     public String toString() {
+        String[] stageName = name.split("(?=\\p{Upper})");
+        String name = "";
+        for (int i = 0; i < stageName.length; i++) {
+            if(i < stageName.length - 1)
+                name += stageName[i] + " ";
+            else
+                name += stageName[i];
+        }
         return name;
     }
 }
