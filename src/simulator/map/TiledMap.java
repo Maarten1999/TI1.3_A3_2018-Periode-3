@@ -71,18 +71,36 @@ public class TiledMap {
                 case "objects":
                     JsonArray tempTargets = layersTemp.getJsonObject(i).getJsonArray("objects");
                     for (int ii = 0; ii < tempTargets.size(); ii++) {
-                        JsonObject target = layersTemp.getJsonObject(i).getJsonArray("objects").getJsonObject(ii);
-                        Point point = new Point((target.getInt("x") + target.getInt("width") / 2) / tileHeight,
-                                (target.getInt("y") + target.getInt("height") / 2) / tileHeight);
+                        JsonObject target = tempTargets.getJsonObject(ii);
                         String name = target.getString("name");
-                        this.targets.add(new Target(name, point));
-                        if(target.getString("type").equals("Stage")){
-                            stages.add(new Stage(name, target.getJsonObject("properties").getInt("capacity"),
-                                    new Point(target.getJsonObject("properties").getInt("EntranceX"),target.getJsonObject("properties").getInt("EntranceY")),
-                                    new Point(target.getJsonObject("properties").getInt("ExitX"),target.getJsonObject("properties").getInt("ExitY"))));
+                        String type = target.getString("type");
+                        switch (type) {
+                            case "Stage":
+                                Point entrancePointStage = new Point(target.getJsonObject("properties").getInt("EntranceX"), target.getJsonObject("properties").getInt("EntranceY"));
+                                Point exitPointStage = new Point(target.getJsonObject("properties").getInt("ExitX"), target.getJsonObject("properties").getInt("ExitY"));
+
+                                stages.add(new Stage(name, target.getJsonObject("properties").getInt("capacity"), entrancePointStage, exitPointStage));
+                                targets.add(new Target(name, entrancePointStage));
+                                break;
+                            case "Entrance/Exit":
+                                int max = (target.getJsonObject("properties").getInt("EndTileX") - target.getJsonObject("properties").getInt("StartTileX")) / 2;
+                                for (int j = 0; j < max; j++) {
+                                    Point entrancePoint = new Point(target.getJsonObject("properties").getInt("StartTileX") + j, target.getJsonObject("properties").getInt("Y"));
+                                    Point exitPoint = new Point(target.getJsonObject("properties").getInt("EndTileX") - j, target.getJsonObject("properties").getInt("Y"));
+                                    targets.add(new Target("Entrance" + (j + 1), entrancePoint));
+                                    targets.add(new Target("Exit" + (j + 1), exitPoint));
+                                }
+                                break;
+                            case "toilet":
+                                Point toiletPoint = new Point(target.getJsonObject("properties").getInt("tileX"), target.getJsonObject("properties").getInt("tileY"));
+                                targets.add(new Target(name, toiletPoint));
+                                break;
+                            case "Store":
+                                Point storePoint = new Point(target.getJsonObject("properties").getInt("EntranceX"), target.getJsonObject("properties").getInt("EntranceY"));
+                                targets.add(new Target(name, storePoint));
+                                break;
                         }
                     }
-                    System.out.println(stages);
                     break;
                 default:
                     int[][] data = new int[height][width];
