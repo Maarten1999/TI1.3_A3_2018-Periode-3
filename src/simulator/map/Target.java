@@ -1,9 +1,9 @@
 package simulator.map;
 
+import simulator.Visitor;
 import java.awt.*;
 
-public class Target {
-
+public abstract class Target {
     private String name;
     private Point targetPoint;
 
@@ -21,4 +21,7 @@ public class Target {
     public Point getTargetPoint() {
         return targetPoint;
     }
+
+    public abstract void updateVisitor(Visitor visitor);
+    public abstract void teleport(Point point1, Point point2, Visitor visitor);
 }
