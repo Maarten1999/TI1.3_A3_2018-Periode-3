@@ -118,7 +118,15 @@ public class Visitor {
                 {
                     PathMap pm = PathFinding.instance().getPathMap(t);
 
-                    int length = pm.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32)).length;
+                    Point[] p = pm.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32));
+
+                    if(p == null)
+                        p = pm.getRoute(new Point((int)previousPosition.getX() / 32, (int)previousPosition.getY() / 32));
+
+                    if(p == null)
+                        continue;
+
+                    int length = p.length;
 
                     if( length < distance) {
                         currentSelection = t;
