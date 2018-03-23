@@ -33,7 +33,7 @@ public class PathMap {
 
 
 
-        initializeMap(map);//init the node map based on map data
+        initializeMap(map);//init the node map based on map agenda.data
         nodeList = checkMap(startPoint);//check next nodes to be activated;
 
         while(nodeList.size() > 0){//while we have nodes to activate keep activating them
@@ -71,7 +71,7 @@ public class PathMap {
 
     public Point[] getRoute(Point position) {
 
-        if (!succesfulCreated)//the path map wasnt created with the correct data so we return null
+        if (!succesfulCreated)//the path map wasnt created with the correct agenda.data so we return null
             return null;
 
         if (position.x < 0 || position.x >= size.x || position.y < 0 || position.y >= size.y)//check if position is inside the map size

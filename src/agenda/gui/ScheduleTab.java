@@ -13,7 +13,6 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class ScheduleTab extends JPanel implements MouseListener {
@@ -29,7 +28,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
         //New button
         JButton newButton = new JButton("New Performance");
         newButton.addActionListener(e -> {
-            if(schedule.getArtists().size() < 1){
+            if(!areThereArtists()){
                JOptionPane.showMessageDialog(null, "There are no artists to add to the performance!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -119,8 +118,7 @@ public class ScheduleTab extends JPanel implements MouseListener {
 
             // Draw name
             g2d.setColor(Color.BLACK);
-            String name = stage.getName();
-            drawText(g2d, name, x + STAGE_BAR_WIDTH / 2, 30, true);
+            drawText(g2d, stage.toString(), x + STAGE_BAR_WIDTH / 2, 30, true);
             x += STAGE_BAR_WIDTH;
         }
     }
@@ -165,6 +163,19 @@ public class ScheduleTab extends JPanel implements MouseListener {
         this.schedule = schedule;
         initBoxes();
         repaint();
+    }
+
+    private boolean areThereArtists(){
+        boolean available = false;
+        if(schedule.getArtists().size() == 0)
+            available = false;
+        else{
+            for(Artist artist : schedule.getArtists()){
+                if(!artist.getName().isEmpty())
+                    available = true;
+            }
+        }
+        return available;
     }
 
     @Override

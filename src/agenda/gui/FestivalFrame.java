@@ -2,26 +2,30 @@ package agenda.gui;
 
 import agenda.data.Schedule;
 import agenda.data.Stage;
+import simulator.map.TiledMap;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.*;
 
 public class FestivalFrame extends JFrame implements WindowFocusListener {
 
-    private PerformanceTab performanceTab;
     private Schedule schedule;
-    private ArtistTab artistTab;
+    private JTabbedPane tabs;
     private ScheduleTab scheduleTab;
+    private PerformanceTab performanceTab;
+    private ArtistTab artistTab;
+    private SimulatorTab simulatorTab;
     private JFileChooser fileChooser;
 
     public FestivalFrame() {
         //Make test schedule
         this.schedule = new Schedule();
-        addMockStages();
         setTitle(this.schedule.getName());
 
         // Window settings
@@ -30,20 +34,26 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         setResizable(false);
         setLocationRelativeTo(null);
         addWindowFocusListener(this);
+
         // Menu bar
         addMenuBar();
 
         // File chooser
         addFileChooser();
 
+        //Keyboard bindings
+        addKeyBoardBindings();
+
         // Tabs
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
         this.scheduleTab = new ScheduleTab(schedule);
         tabs.addTab("Schedule", this.scheduleTab);
         this.performanceTab = new PerformanceTab(schedule);
         tabs.addTab("Performances", this.performanceTab);
         this.artistTab = new ArtistTab(schedule);
         tabs.addTab("Artists", this.artistTab);
+        this.simulatorTab = new SimulatorTab();
+        tabs.addTab("Simulator", this.simulatorTab);
         add(tabs);
         tabs.addChangeListener(e -> {
             switch (tabs.getSelectedIndex()) {
@@ -55,9 +65,20 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
                     break;
             }
         });
-
+        addMockStages();
         setVisible(true);
+        setFocusable(true);
+        requestFocusInWindow();
+        requestFocus();
+    }
 
+    private void addKeyBoardBindings() {
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (tabs.getSelectedIndex() == 3)
+                    simulatorTab.keyPressed(e);
+            }
+        });
     }
 
     private void addFileChooser() {
@@ -69,8 +90,8 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
 
     private void addMockStages(){
-        for (int i = 0; i < 6; i++) {
-            this.schedule.addStage(new Stage("Stage " + (i + 1), 500));
+        for (Stage stage : this.simulatorTab.getSimulatorPanel().getMap().getStages()) {
+            this.schedule.addStage(stage);
         }
     }
 
@@ -144,8 +165,4 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
 
     @Override
     public void windowLostFocus(WindowEvent e) {}
-
-    public Schedule getSchedule() {
-        return schedule;
-    }
 }
