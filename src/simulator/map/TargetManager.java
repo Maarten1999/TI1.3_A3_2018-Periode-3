@@ -36,7 +36,14 @@ public class TargetManager {
                 storeList.add(tname);
             else if (tname.contains("Stage"))
                 stageList.add(tname);
+
+            t.initialize();
         }
+    }
+
+    public void update(float deltaTimeFloat){
+        for(Target t : targets)
+            t.update(deltaTimeFloat);
     }
 
     public Target getTarget(String targetName){

@@ -15,12 +15,13 @@ public class Gate extends Target{
     }
 
     @Override
-    public void updateVisitor(Visitor visitor) {
-        //
+    public void update(float deltatimeFloat){
+
     }
 
     @Override
-    public void teleport(Point point1, Point point2, Visitor visitor) {
-        //
+    public void removeVisitor(simulator.Visitors.Visitor visitor) {
+
     }
+
 }

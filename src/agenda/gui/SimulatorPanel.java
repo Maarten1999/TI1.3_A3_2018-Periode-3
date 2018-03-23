@@ -6,6 +6,8 @@ import simulator.Physics.PhysicsWorld;
 import simulator.Train;
 import simulator.Visitors.Visitor;
 import simulator.Visitors.VisitorManager;
+import simulator.map.Target;
+import simulator.map.TargetManager;
 import simulator.map.TiledMap;
 import simulator.pathfinding.PathFinding;
 
@@ -26,7 +28,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
     private TiledMap map;
     private Timer timer;
     private Train train;
-    private int amountOfVisitors = 1000;
+    private int amountOfVisitors = 100;
     private Camera camera;
     private Point2D previousMouseCoordinates;
     private Point pathCoord;
@@ -150,6 +152,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
 //            this.visitorManager.addVisitor();
 //        }
         PhysicsWorld.getInstance().update(deltaTimeFloat);
+        TargetManager.instance().update(deltaTimeFloat);
         repaint();
     }
 

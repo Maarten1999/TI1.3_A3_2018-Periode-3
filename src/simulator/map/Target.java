@@ -1,6 +1,6 @@
 package simulator.map;
 
-import simulator.Visitor;
+import simulator.Visitors.Visitor;
 import simulator.pathfinding.PathFinding;
 
 import java.awt.*;
@@ -9,13 +9,17 @@ import java.util.ArrayList;
 public abstract class Target {
     private String name;
     private Point targetPoint;
-    ArrayList<Visitor> visitors = new ArrayList<>();
+    protected int cap;
+    protected ArrayList<Visitor> visitors = new ArrayList<>();
 
     public Target(String name, Point targetPoint) {
         this.name = name;
         this.targetPoint = targetPoint;
-        //example
-        //PathFinding.instance().generateMap(name, targetPoint);
+        this.cap = cap;
+    }
+
+    public void initialize(){
+        PathFinding.instance().generateMap(name, targetPoint);
     }
 
     public String getName() {
@@ -26,8 +30,17 @@ public abstract class Target {
         return targetPoint;
     }
 
-    public abstract void updateVisitor(Visitor visitor);
-    public abstract void teleport(Point point1, Point point2, Visitor visitor);
-    public void addVisitor(Visitor visitor) { this.visitors.add(visitor); }
+    public void addVisitor(Visitor visitor){
+        if(visitors.size() >= cap)
+            return;
+
+        this.visitors.add(visitor);
+        visitor.onRemoval();
+    }
+
+    public abstract void update(float deltatimeFloat);
+
+    public abstract void removeVisitor(Visitor visitor);
+
     public ArrayList<Visitor> getVisitors() { return visitors; }
 }

@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Festival Planner.iml" filepath="$PROJECT_DIR$/Festival Planner.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Festival Simulator/Festival Simulator.iml" filepath="$PROJECT_DIR$/Festival Simulator/Festival Simulator.iml" />
     </modules>
   </component>
 </project>

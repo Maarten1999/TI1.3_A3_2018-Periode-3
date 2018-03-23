@@ -15,7 +15,7 @@ public class Stage extends Target implements Serializable {
     private Point exit;
 
     public Stage(String name, int capacity, Point entrance, Point exit) {
-        super(name, entrance);
+        super(name, entrance);//test
         this.name = name;
         this.capacity = capacity;
         this.entrance = entrance;
@@ -27,14 +27,15 @@ public class Stage extends Target implements Serializable {
     }
 
     @Override
-    public void updateVisitor(Visitor visitor) {
-        //
+    public void update(float deltatimeFloat){
+
     }
 
     @Override
-    public void teleport(Point point1, Point point2, Visitor visitor) {
-        //
+    public void removeVisitor(simulator.Visitors.Visitor visitor) {
+
     }
+
 
     public void setName(String name) {
         this.name = name;

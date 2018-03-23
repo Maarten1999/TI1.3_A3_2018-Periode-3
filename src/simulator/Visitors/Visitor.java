@@ -3,6 +3,8 @@ package simulator.Visitors;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Vector2;
 import simulator.Physics.PhysicsWorld;
+import simulator.map.Target;
+import simulator.map.TargetManager;
 import simulator.pathfinding.PathFinding;
 import simulator.pathfinding.PathMap;
 
@@ -10,6 +12,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class Visitor {
     private Point2D position;
@@ -32,7 +36,9 @@ public class Visitor {
 
     private boolean isVisitorActive;
 
-    private Point2D target;
+    private boolean inNeedOfService;
+    private String entertainmentTarget;
+    private String serviceTarget;
 
     public Visitor(BufferedImage image){
         this.image = image;
@@ -40,36 +46,95 @@ public class Visitor {
         angle = 0;
         position = new Point2D.Double(0, 0);
         previousPosition = new Point2D.Double(0, 0);
-        target = new Point2D.Double(0, 0);
+        entertainmentTarget = new Point2D.Double(0, 0).toString();
         isVisitorActive = false;
 
         foodLevel = 100 + Math.random() * 100;
         foodFactor = Math.random();
 
-        bathroomLevel = Math.random() * 200;
+        bathroomLevel = 10;//Math.random() * 200;
         bathroomFactor = Math.random();
     }
 
     public void setTarget(Point2D newTarget){
-        this.target = newTarget;
+        entertainmentTarget = newTarget.toString();
         map = PathFinding.instance().getPathMap(newTarget.toString());
     }
 
-    public void update(float deltatimeFloat){
+    public void setTarget(String targetName){
+        entertainmentTarget = targetName;
+        map = PathFinding.instance().getPathMap(targetName);
+    }
 
+    public void update(float deltatimeFloat){
+        updateServices(deltatimeFloat);
+        updateMovement();
+    }
+
+    private void updateServices(float deltatimeFloat){
         foodLevel -= foodFactor * deltatimeFloat;
         bathroomLevel -= bathroomFactor * deltatimeFloat;
 
-        if(foodLevel < 0) {
-            //etenhalen
-            foodLevel = 200;
-            bathroomLevel -= 13;
-        }
         if(bathroomLevel < 0) {
-            //naar de wc
-            bathroomLevel = 200;
+            HashSet<String> targets = TargetManager.instance().getBathroomList();
+
+            if(!targets.isEmpty()){
+                int distance = 1900000000;
+                String currentSelection = targets.iterator().next();
+
+                for (String t : targets)
+                {
+                    PathMap pm = PathFinding.instance().getPathMap(t);
+
+                    Point[] p = pm.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32));
+
+                    if(p == null)
+                        p = pm.getRoute(new Point((int)previousPosition.getX() / 32, (int)previousPosition.getY() / 32));
+
+                    if(p == null)
+                        continue;
+
+                    int length = p.length;
+
+                    if( length < distance) {
+                        currentSelection = t;
+                        distance = length;
+                    }
+                }
+
+                serviceTarget = currentSelection;
+                map = PathFinding.instance().getPathMap(serviceTarget);
+                inNeedOfService = true;
+            }
+        }
+        else if(foodLevel < 0) {
+
+            HashSet<String> targets = TargetManager.instance().getStoreList();
+            if(!targets.isEmpty()) {
+                int distance = 1900000000;
+                String currentSelection = targets.iterator().next();
+
+                for (String t : targets)
+                {
+                    PathMap pm = PathFinding.instance().getPathMap(t);
+
+                    int length = pm.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32)).length;
+
+                    if( length < distance) {
+                        currentSelection = t;
+                        distance = length;
+                    }
+                }
+
+                serviceTarget = currentSelection;
+                map = PathFinding.instance().getPathMap(serviceTarget);
+                inNeedOfService = false;
+            }
         }
 
+    }
+
+    private void updateMovement(){
 
         //no need to update;
         if(!isVisitorActive)
@@ -96,6 +161,13 @@ public class Visitor {
         if(p != null) {
             if(p.length > 1)
                 route = p;
+            else if (p.length <= 1){
+                if(inNeedOfService){
+                    TargetManager.instance().getTarget(serviceTarget).addVisitor(this);
+                    return;
+                }
+
+            }
         }
         else if (route == null)
             return;
@@ -109,8 +181,6 @@ public class Visitor {
         Point2D diffForMovement = new Point2D.Double(
                 (route[1].getX() * 32) + 16 - position.getX(),
                 (route[1].getY() * 32) + 16 - position.getY()
-//                target.getX() - position.getX(),
-//                target.getY() - position.getY()
         );
 
         movementAngle = Math.atan2(diffForMovement.getY(), diffForMovement.getX());
@@ -169,5 +239,18 @@ public class Visitor {
         PhysicsWorld.getInstance().removeBody(body);
         body = null;
         isVisitorActive = false;
+    }
+
+    public void resetBathroom(){
+        bathroomLevel = 200;
+        inNeedOfService = false;
+        map = PathFinding.instance().getPathMap(entertainmentTarget);
+    }
+
+    public void resetFood(){
+        foodLevel = 200;
+        bathroomLevel -= 13;
+        inNeedOfService = false;
+        map = PathFinding.instance().getPathMap(entertainmentTarget);
     }
 }
