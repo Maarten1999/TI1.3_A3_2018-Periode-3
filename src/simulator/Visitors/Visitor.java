@@ -24,18 +24,30 @@ public class Visitor {
     private PathMap map;
     private Point[] route;
 
+    private double foodLevel;
+    private double bathroomLevel;
+
+    private double foodFactor;
+    private double bathroomFactor;
+
     private boolean isVisitorActive;
 
     private Point2D target;
 
     public Visitor(BufferedImage image){
         this.image = image;
-        speed = 7 + 4 * Math.random();
+        speed = 75 + 30 * Math.random();
         angle = 0;
         position = new Point2D.Double(0, 0);
         previousPosition = new Point2D.Double(0, 0);
         target = new Point2D.Double(0, 0);
         isVisitorActive = false;
+
+        foodLevel = 100 + Math.random() * 100;
+        foodFactor = Math.random();
+
+        bathroomLevel = Math.random() * 200;
+        bathroomFactor = Math.random();
     }
 
     public void setTarget(Point2D newTarget){
@@ -43,7 +55,22 @@ public class Visitor {
         map = PathFinding.instance().getPathMap(newTarget.toString());
     }
 
-    public void update(){
+    public void update(float deltatimeFloat){
+
+        foodLevel -= foodFactor * deltatimeFloat;
+        bathroomLevel -= bathroomFactor * deltatimeFloat;
+
+        if(foodLevel < 0) {
+            //etenhalen
+            foodLevel = 200;
+            bathroomLevel -= 13;
+        }
+        if(bathroomLevel < 0) {
+            //naar de wc
+            bathroomLevel = 200;
+        }
+
+
         //no need to update;
         if(!isVisitorActive)
             return;
@@ -65,11 +92,6 @@ public class Visitor {
             return;
 
         Point[] p = map.getRoute(new Point((int) position.getX() / 32, (int) position.getY() / 32));
-
-        if(p != null)
-            System.out.println(p.length);
-        else
-            System.out.println("null");
 
         if(p != null) {
             if(p.length > 1)

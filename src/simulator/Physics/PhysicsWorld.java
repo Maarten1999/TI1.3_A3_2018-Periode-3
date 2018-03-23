@@ -90,9 +90,9 @@ public class PhysicsWorld {
         world.removeBody(body);
     }
 
-    public void update(){
-        world.step(1000/60);
-        //world.update(0.001);
+    public void update(float deltaTimeFloat){
+        //world.step(1000/60);
+        world.update(deltaTimeFloat);
     }
 
     public void draw(Graphics2D g, float zoom){

@@ -22,10 +22,11 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
     private VisitorManager visitorManager;
     private int windowWidth, windowHeight;
 
+    private long lastTime;
     private TiledMap map;
     private Timer timer;
     private Train train;
-    private int amountOfVisitors = 1;
+    private int amountOfVisitors = 1000;
     private Camera camera;
     private Point2D previousMouseCoordinates;
     private Point pathCoord;
@@ -123,6 +124,10 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        long currentTime = System.nanoTime();
+        long deltaTime = currentTime - lastTime;
+        float deltaTimeFloat = (float)((double)deltaTime / 1000000000.0);
+        lastTime = currentTime;
 
         if(visitorManager.getVisitorList().size() < amountOfVisitors && i > 1){
             Visitor v = visitorManager.createVisitor();
@@ -130,9 +135,11 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
             i-=1;
         }
 
-        i+=0.09;
+        i+=0.3;
 
-        this.visitorManager.update();
+        deltaTimeFloat = deltaTimeFloat > 1? 1 : deltaTimeFloat;
+
+        this.visitorManager.update(deltaTimeFloat);
 
 //        if (this.train != null) {
 //            this.train.update(this.visitorManager);
@@ -142,7 +149,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
 //        if (this.amountOfVisitors > this.visitorManager.getVisitors().size()) {
 //            this.visitorManager.addVisitor();
 //        }
-        PhysicsWorld.getInstance().update();
+        PhysicsWorld.getInstance().update(deltaTimeFloat);
         repaint();
     }
 

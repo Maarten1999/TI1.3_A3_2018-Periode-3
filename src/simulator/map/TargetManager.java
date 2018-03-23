@@ -1,6 +1,7 @@
 package simulator.map;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class TargetManager {
     private static TargetManager instance;
@@ -14,13 +15,31 @@ public class TargetManager {
         return instance;
     }
 
+    private HashSet<String> bathroomList;
+    private HashSet<String> storeList;
+    private HashSet<String> stageList;
+
     private ArrayList<Target> targets;
 
     private TargetManager(ArrayList<Target> targets){
         this.targets = targets;
+
+        bathroomList = new HashSet<>();
+        storeList = new HashSet<>();
+        stageList = new HashSet<>();
+
+        for(Target t : targets){
+            String tname = t.getName();
+            if(tname.contains("wc"))
+                bathroomList.add(tname);
+            else if (tname.contains("Store"))
+                storeList.add(tname);
+            else if (tname.contains("Stage"))
+                stageList.add(tname);
+        }
     }
 
-    private Target getTarget(String targetName){
+    public Target getTarget(String targetName){
         Target target = null;
         for (Target t : targets) {
             if(t.getName().equals(targetName)){
@@ -28,5 +47,17 @@ public class TargetManager {
             }
         }
         return target;
+    }
+
+    public HashSet<String> getBathroomList() {
+        return bathroomList;
+    }
+
+    public HashSet<String> getStoreList() {
+        return storeList;
+    }
+
+    public HashSet<String> getStageList() {
+        return stageList;
     }
 }

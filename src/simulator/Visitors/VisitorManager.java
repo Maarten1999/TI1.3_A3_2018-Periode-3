@@ -33,9 +33,9 @@ public class VisitorManager {
         drawDebug = debug;
     }
 
-    public void update(){
+    public void update(float deltatimeFloat){
         for(Visitor v : visitorList)
-            v.update();
+            v.update(deltatimeFloat);
     }
 
     public void draw(Graphics2D graphics2D){
