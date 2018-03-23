@@ -1,6 +1,5 @@
 package agenda.gui;
 
-import org.omg.CORBA.portable.ValueInputStream;
 import simulator.Camera;
 import simulator.Physics.PhysicsWorld;
 import simulator.Train;
