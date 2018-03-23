@@ -30,7 +30,6 @@ public class PathMap {
         if(!succesfulCreated)//if not succesfully created return
             return;
 
-        System.out.println(size.toString());
 
         initializeMap(map);//init the node map based on map agenda.data
         nodeList = checkMap(startPoint);//check next nodes to be activated;
