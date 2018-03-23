@@ -1,5 +1,7 @@
 package simulator;
 
+import simulator.pathfinding.PathFinding;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -13,6 +15,7 @@ public class Visitor {
     private BufferedImage image;
     private double speed;
     private Point2D targetPosition = new Point2D.Double(500, 500);
+    private String targetName;
     private int health = (int) (50 + Math.random() * 50);
     private int damage = (int) (5 + Math.random() * 10);
     private int collisionTime = 0;
@@ -43,7 +46,6 @@ public class Visitor {
     }
 
     public void update(ArrayList<Visitor> visitors) {
-
         Point2D diff = new Point2D.Double(
                 targetPosition.getX() - position.getX(),
                 targetPosition.getY() - position.getY()
@@ -116,6 +118,7 @@ public class Visitor {
 
     public void setTarget(Point2D targetPosition) {
         this.targetPosition = targetPosition;
+        this.targetName = targetName;
     }
 
     private boolean dealDamage(int damage) {

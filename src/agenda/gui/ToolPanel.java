@@ -8,6 +8,6 @@ class ToolPanel extends JPanel {
 
     ToolPanel(SimulatorPanel simulatorPanel) {
         this.simulatorPanel = simulatorPanel;
-        add(new JButton("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"));
+        add(new JButton("test"));
     }
 }

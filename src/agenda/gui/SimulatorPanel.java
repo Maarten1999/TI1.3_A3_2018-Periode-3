@@ -63,7 +63,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
         this.visitorManager.draw(g2d);
         if (this.train != null)
             this.train.draw(g2d);
-        
+
         g2d.setTransform(prevTrans);
     }
 

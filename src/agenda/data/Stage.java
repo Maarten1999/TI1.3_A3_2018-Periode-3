@@ -6,6 +6,7 @@ import simulator.map.Target;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Stage extends Target implements Serializable {
     private String name;
@@ -38,22 +39,17 @@ public class Stage extends Target implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
-
+    public int getCapacity() {
+        return capacity;
+    }
     public Point getEntrance() {
         return entrance;
     }
+    public Point getExit() { return exit; }
 
-    public Point getExit() {
-        return exit;
-    }
 
     @Override
     public String toString() {
