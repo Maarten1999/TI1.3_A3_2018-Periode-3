@@ -40,6 +40,8 @@ public class Visitor {
     private String entertainmentTarget;
     private String serviceTarget;
 
+    private Target currentTarget;
+
     public Visitor(BufferedImage image){
         this.image = image;
         speed = 75 + 30 * Math.random();
@@ -52,7 +54,7 @@ public class Visitor {
         foodLevel = 100 + Math.random() * 100;
         foodFactor = Math.random();
 
-        bathroomLevel = 10;//Math.random() * 200;
+        bathroomLevel = Math.random() * 200;
         bathroomFactor = Math.random();
     }
 
@@ -69,7 +71,14 @@ public class Visitor {
     public void update(float deltatimeFloat){
         updateServices(deltatimeFloat);
         updateMovement();
+        //example
+        //if(tijd && alsOpslaan)
+        //  Timeline.instance().addVisitorState(GetState());
     }
+
+    ///public VisitorState GetState();
+
+    //public void SetState();
 
     private void updateServices(float deltatimeFloat){
         foodLevel -= foodFactor * deltatimeFloat;
@@ -107,38 +116,39 @@ public class Visitor {
                 inNeedOfService = true;
             }
         }
-        else if(foodLevel < 0) {
-
-            HashSet<String> targets = TargetManager.instance().getStoreList();
-            if(!targets.isEmpty()) {
-                int distance = 1900000000;
-                String currentSelection = targets.iterator().next();
-
-                for (String t : targets)
-                {
-                    PathMap pm = PathFinding.instance().getPathMap(t);
-
-                    Point[] p = pm.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32));
-
-                    if(p == null)
-                        p = pm.getRoute(new Point((int)previousPosition.getX() / 32, (int)previousPosition.getY() / 32));
-
-                    if(p == null)
-                        continue;
-
-                    int length = p.length;
-
-                    if( length < distance) {
-                        currentSelection = t;
-                        distance = length;
-                    }
-                }
-
-                serviceTarget = currentSelection;
-                map = PathFinding.instance().getPathMap(serviceTarget);
-                inNeedOfService = false;
-            }
-        }
+//        else if(foodLevel < 0) {
+//
+//
+//            HashSet<String> targets = TargetManager.instance().getStoreList();
+//            if(!targets.isEmpty()) {
+//                int distance = 1900000000;
+//                String currentSelection = targets.iterator().next();
+//
+//                for (String t : targets)
+//                {
+//                    PathMap pm = PathFinding.instance().getPathMap(t);
+//
+//                    Point[] p = pm.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32));
+//
+//                    if(p == null)
+//                        p = pm.getRoute(new Point((int)previousPosition.getX() / 32, (int)previousPosition.getY() / 32));
+//
+//                    if(p == null)
+//                        continue;
+//
+//                    int length = p.length;
+//
+//                    if( length < distance) {
+//                        currentSelection = t;
+//                        distance = length;
+//                    }
+//                }
+//
+//                serviceTarget = currentSelection;
+//                map = PathFinding.instance().getPathMap(serviceTarget);
+//                inNeedOfService = false;
+//            }
+//        }
 
     }
 
@@ -231,7 +241,8 @@ public class Visitor {
 
         AffineTransform tx = new AffineTransform();
         tx.translate(body.getTransform().getTranslation().x - image.getWidth() / 2, body.getTransform().getTranslation().y - image.getHeight() / 2);
-        tx.rotate(angle, image.getWidth() / 2, image.getHeight() / 2);
+
+        tx.rotate(movementAngle, image.getWidth() / 2, image.getHeight() / 2);
 
         graphics2D.drawImage(image, tx, null);
     }

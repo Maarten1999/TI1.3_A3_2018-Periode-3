@@ -27,7 +27,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
     private TiledMap map;
     private Timer timer;
     private Train train;
-    private int amountOfVisitors = 100;
+    private int amountOfVisitors = 500;
     private Camera camera;
     private Point2D previousMouseCoordinates;
     private Point pathCoord;

@@ -39,35 +39,37 @@ public class PhysicsWorld {
         s.setPositionConstraintSolverIterations(1);
         s.setVelocityConstraintSolverIterations(1);
 
+        s.setMaximumRotation(0);
+
         world = new World();
         world.setGravity(new Vector2(0, 0));
 
         world.setSettings(s);
 
-        world.setNarrowphaseDetector(new Sat());
+        //world.setNarrowphaseDetector(new Sat());
 
-        Rectangle rLong = Geometry.createRectangle(size.getX() * 32, 1);
-        Rectangle rShort = Geometry.createRectangle(1, size.getY() * 32);
+        Rectangle rLong = Geometry.createRectangle(size.getX() * 32 + 320, 160);
+        Rectangle rShort = Geometry.createRectangle(160, size.getY() * 32 + 320);
 
         Body b = new Body();
         b.addFixture(rLong);
         b.setMass(MassType.INFINITE);
-        b.getTransform().setTranslation(size.getX() * 16, -1);
+        b.getTransform().setTranslation(size.getX() * 16, -80);
         world.addBody(b);
         b = new Body();
         b.addFixture(rLong);
         b.setMass(MassType.INFINITE);
-        b.getTransform().setTranslation(size.getX() * 16, size.getY() * 32);
+        b.getTransform().setTranslation(size.getX() * 16, size.getY() * 32 + 80);
         world.addBody(b);
         b = new Body();
         b.addFixture(rShort);
         b.setMass(MassType.INFINITE);
-        b.getTransform().setTranslation(-1, size.getY() * 16);
+        b.getTransform().setTranslation(-80, size.getY() * 16);
         world.addBody(b);
         b = new Body();
         b.addFixture(rShort);
         b.setMass(MassType.INFINITE);
-        b.getTransform().setTranslation(size.getX() * 32, size.getY() * 16);
+        b.getTransform().setTranslation(size.getX() * 32 + 80, size.getY() * 16);
         world.addBody(b);
     }
 
