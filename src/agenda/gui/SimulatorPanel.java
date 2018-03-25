@@ -5,8 +5,6 @@ import simulator.Physics.PhysicsWorld;
 import simulator.Train;
 import simulator.Visitors.Visitor;
 import simulator.Visitors.VisitorManager;
-import simulator.map.Target;
-import simulator.map.TargetManager;
 import simulator.map.TiledMap;
 import simulator.pathfinding.PathFinding;
 
@@ -16,34 +14,32 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import java.time.LocalTime;
 
-public class SimulatorPanel extends JPanel implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
+public class SimulatorPanel extends JPanel implements  MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
 
-    private VisitorManager visitorManager;
     private int windowWidth, windowHeight;
 
-    private long lastTime;
+    private SimulatorTab simulatorTab;
+    private VisitorManager visitorManager;
+    private LocalTime time;
     private TiledMap map;
-    private Timer timer;
     private Train train;
-    private int amountOfVisitors = 500;
     private Camera camera;
     private Point2D previousMouseCoordinates;
     private Point pathCoord;
 
     private boolean drawDebug;
 
-    SimulatorPanel() {
+    SimulatorPanel(SimulatorTab simulatorTab, VisitorManager visitorManager) {
+        this.simulatorTab = simulatorTab;
+        this.visitorManager = visitorManager;
         map = new TiledMap(getClass().getResourceAsStream("\\..\\..\\maps\\festivalMap.json"));
         PhysicsWorld.initialize(new Point(map.getWidth(), map.getHeight()));
-        visitorManager = new VisitorManager();
         camera = new Camera();
         setBackground(new Color(60, 100, 40));
         addMouseListener(this);
         addMouseWheelListener(this);
-        timer = new Timer(1, this);
-        timer.start();
         addMouseMotionListener(this);
         addKeyListener(this);
         addComponentListener(new ComponentAdapter() {
@@ -99,9 +95,6 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
                     train = new Train(map.getWidth() * map.getTileSize(), -200,
                             (int) (100 + Math.random() * (map.getHeight() * map.getTileSize() - 200)), 10);
                 break;
-            case KeyEvent.VK_P:
-                toggleTimer();
-                break;
             case KeyEvent.VK_D:
                 drawDebug = !drawDebug;
                 visitorManager.setDebugMode(drawDebug);
@@ -114,46 +107,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
 
     }
 
-    private void toggleTimer() {
-        if (timer.isRunning())
-            timer.stop();
-        else
-            timer.start();
-    }
 
-    double i = 0;//test
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        long currentTime = System.nanoTime();
-        long deltaTime = currentTime - lastTime;
-        float deltaTimeFloat = (float)((double)deltaTime / 1000000000.0);
-        lastTime = currentTime;
-
-        if(visitorManager.getVisitorList().size() < amountOfVisitors && i > 1){
-            Visitor v = visitorManager.createVisitor();
-            v.onPlacement(new Point(21 * 32, 1 * 32));
-            i-=1;
-        }
-
-        i+=0.3;
-
-        deltaTimeFloat = deltaTimeFloat > 1? 1 : deltaTimeFloat;
-
-        this.visitorManager.update(deltaTimeFloat);
-
-//        if (this.train != null) {
-//            this.train.update(this.visitorManager);
-//            if (this.train.isFinished())
-//                this.train = null;
-//        }
-//        if (this.amountOfVisitors > this.visitorManager.getVisitors().size()) {
-//            this.visitorManager.addVisitor();
-//        }
-        PhysicsWorld.getInstance().update(deltaTimeFloat);
-        TargetManager.instance().update(deltaTimeFloat);
-        repaint();
-    }
 
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -169,10 +123,12 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
     }
 
     public void mouseDragged(MouseEvent e) {
-        Point2D mouseCoordinates = e.getPoint();
-        camera.translate(mouseCoordinates.getX() - previousMouseCoordinates.getX(),
-                mouseCoordinates.getY() - previousMouseCoordinates.getY());
-        repaint();
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            Point2D mouseCoordinates = e.getPoint();
+            camera.translate(mouseCoordinates.getX() - previousMouseCoordinates.getX(),
+                    mouseCoordinates.getY() - previousMouseCoordinates.getY());
+            repaint();
+        }
     }
 
     @Override
@@ -193,23 +149,28 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
 
     @Override
     public void mousePressed(MouseEvent e) {
-        Point2D mouseCoordinates = e.getPoint();
-        previousMouseCoordinates = new Point2D.Double(mouseCoordinates.getX() - camera.getTranslateX(), mouseCoordinates.getY() - camera.getTranslateY());
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            Point2D mouseCoordinates = e.getPoint();
+            previousMouseCoordinates = new Point2D.Double(mouseCoordinates.getX() - camera.getTranslateX(),
+                    mouseCoordinates.getY() - camera.getTranslateY());
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (camera.getTranslateX() > -camera.getTransformIVI().transform(new Point2D.Double(0, 0), null).getX()) {
-            camera.translate(-camera.getTransformIVI().transform(new Point2D.Double(0, 0), null).getX(), camera.getTranslateY());
-        } else if (camera.getTranslateX() < -(camera.getTransformIVI().transform(new Point2D.Double(map.getActualWidth(), 0), null).getX() - windowWidth)) {
-            camera.translate(-(camera.getTransformIVI().transform(new Point2D.Double(map.getActualWidth(), 0), null).getX() - windowWidth), camera.getTranslateY());
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            if (camera.getTranslateX() > -camera.getTransformIVI().transform(new Point2D.Double(0, 0), null).getX()) {
+                camera.translate(-camera.getTransformIVI().transform(new Point2D.Double(0, 0), null).getX(), camera.getTranslateY());
+            } else if (camera.getTranslateX() < -(camera.getTransformIVI().transform(new Point2D.Double(map.getActualWidth(), 0), null).getX() - windowWidth)) {
+                camera.translate(-(camera.getTransformIVI().transform(new Point2D.Double(map.getActualWidth(), 0), null).getX() - windowWidth), camera.getTranslateY());
+            }
+            if (camera.getTranslateY() > -camera.getTransformIVI().transform(new Point2D.Double(0, 0), null).getY()) {
+                camera.translate(camera.getTranslateX(), -camera.getTransformIVI().transform(new Point2D.Double(0, 0), null).getY());
+            } else if (camera.getTranslateY() < -(camera.getTransformIVI().transform(new Point2D.Double(0, map.getActualHeight()), null).getY() - windowHeight)) {
+                camera.translate(camera.getTranslateX(), -(camera.getTransformIVI().transform(new Point2D.Double(0, map.getActualHeight()), null).getY() - windowHeight));
+            }
+            repaint();
         }
-        if (camera.getTranslateY() > -camera.getTransformIVI().transform(new Point2D.Double(0, 0), null).getY()) {
-            camera.translate(camera.getTranslateX(), -camera.getTransformIVI().transform(new Point2D.Double(0, 0), null).getY());
-        } else if (camera.getTranslateY() < -(camera.getTransformIVI().transform(new Point2D.Double(0, map.getActualHeight()), null).getY() - windowHeight)) {
-            camera.translate(camera.getTranslateX(), -(camera.getTransformIVI().transform(new Point2D.Double(0, map.getActualHeight()), null).getY() - windowHeight));
-        }
-        repaint();
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -222,7 +183,7 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
         if(e.getButton() == MouseEvent.BUTTON3) {
             pathCoord = new Point((int) n.getX() / 32, (int) n.getY() / 32);
             PathFinding.instance().generateMap(pathCoord.toString(), pathCoord);
-            for(Visitor v : visitorManager.getVisitorList()) {
+            for(Visitor v : visitorManager.getVisitors()) {
                 v.setTarget(pathCoord);
             }
         }
@@ -243,4 +204,5 @@ public class SimulatorPanel extends JPanel implements ActionListener, MouseListe
     }
 
     public TiledMap getMap() { return map; }
+
 }

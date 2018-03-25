@@ -1,7 +1,5 @@
 package simulator.map;
 
-import simulator.Visitor;
-
 import java.awt.*;
 
 public class Gate extends Target{
@@ -23,5 +21,4 @@ public class Gate extends Target{
     public void removeVisitor(simulator.Visitors.Visitor visitor) {
 
     }
-
 }

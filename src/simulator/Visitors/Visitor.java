@@ -13,7 +13,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class Visitor {
     private Point2D position;
@@ -56,6 +55,27 @@ public class Visitor {
 
         bathroomLevel = Math.random() * 200;
         bathroomFactor = Math.random();
+    }
+
+    public Visitor(Visitor visitor) {
+        this.position = visitor.position;
+        this.previousPosition = visitor.previousPosition;
+        this.angle = visitor.angle;
+        this.movementAngle = visitor.movementAngle;
+        this.speed = visitor.speed;
+        this.image = visitor.image;
+        this.body = visitor.body;
+        this.map = visitor.map;
+        this.route = visitor.route;
+        this.foodLevel = visitor.foodLevel;
+        this.bathroomLevel = visitor.bathroomLevel;
+        this.foodFactor = visitor.foodFactor;
+        this.bathroomFactor = visitor.bathroomFactor;
+        this.isVisitorActive = visitor.isVisitorActive;
+        this.inNeedOfService = visitor.inNeedOfService;
+        this.entertainmentTarget = visitor.entertainmentTarget;
+        this.serviceTarget = visitor.serviceTarget;
+        this.currentTarget = visitor.currentTarget;
     }
 
     public void setTarget(Point2D newTarget){
@@ -250,7 +270,7 @@ public class Visitor {
     public void onPlacement(Point2D placementPosition){
         position = placementPosition;
         previousPosition = placementPosition;
-        body = PhysicsWorld.getInstance().getBody(placementPosition);
+        body = PhysicsWorld.getInstance().createBody(placementPosition);
         isVisitorActive = true;
     }
 
@@ -271,5 +291,9 @@ public class Visitor {
         bathroomLevel -= 13;
         inNeedOfService = false;
         map = PathFinding.instance().getPathMap(entertainmentTarget);
+    }
+
+    public Point2D getPosition() {
+        return position;
     }
 }

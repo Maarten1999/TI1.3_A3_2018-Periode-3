@@ -1,5 +1,7 @@
 package simulator.Visitors;
 
+import simulator.map.Target;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,11 +11,11 @@ import java.util.ArrayList;
 public class VisitorManager {
 
     private BufferedImage visitorImage;
-    private ArrayList<Visitor> visitorList;
+    private ArrayList<Visitor> visitors;
     private boolean drawDebug;
 
     public VisitorManager(){
-       visitorList = new ArrayList<>();
+       visitors = new ArrayList<>();
        initializeImages();
     }
 
@@ -25,8 +27,8 @@ public class VisitorManager {
         }
     }
 
-    public ArrayList<Visitor> getVisitorList() {
-        return visitorList;
+    public ArrayList<Visitor> getVisitors() {
+        return visitors;
     }
 
     public void setDebugMode(boolean debug){
@@ -34,27 +36,42 @@ public class VisitorManager {
     }
 
     public void update(float deltatimeFloat){
-        for(Visitor v : visitorList)
+        for(Visitor v : visitors)
             v.update(deltatimeFloat);
     }
 
     public void draw(Graphics2D graphics2D){
         if(drawDebug)
-            for(Visitor v: visitorList)
+            for(Visitor v: visitors)
                 v.drawDebug(graphics2D);
 
-        for(Visitor v: visitorList)
+        for(Visitor v: visitors)
             v.draw(graphics2D);
     }
 
-    public Visitor createVisitor(){
+    public Visitor createVisitor(Target entrance1){
         Visitor v = new Visitor(visitorImage);
-        visitorList.add(v);
+        visitors.add(v);
+        v.onPlacement(new Point(entrance1.getTargetPoint().x * 32, entrance1.getTargetPoint().y * 32));
         return v;
     }
 
-    public void removeVisitor(Visitor v){
+    public void createVisitor(Visitor visitor){
+        visitors.add(visitor);
+        visitor.onPlacement(visitor.getPosition());
+    }
+
+    private void removeVisitor(Visitor v){
         v.onRemoval();
-        visitorList.remove(v);
+        visitors.remove(v);
+    }
+
+    public void clear() {
+        while (visitors.size() != 0)
+            removeVisitor(visitors.get(visitors.size() - 1));
+    }
+
+    public void setVisitors(ArrayList<Visitor> visitors) {
+        this.visitors = new ArrayList<>(visitors);
     }
 }

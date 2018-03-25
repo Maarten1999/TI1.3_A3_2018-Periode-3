@@ -73,18 +73,13 @@ public class PhysicsWorld {
         world.addBody(b);
     }
 
-    public Body getBody(Point2D position) {
+    public Body createBody(Point2D position) {
         Body b = new Body();
         b.addFixture(Geometry.createCircle(visitorHitBox));
         b.setMass(MassType.FIXED_ANGULAR_VELOCITY);
         b.getTransform().setTranslation(position.getX(), position.getY());
         b.setBullet(false);
         world.addBody(b);
-//        b.addFixture(Geometry.createRectangle(visitorHitBox, visitorHitBox));
-//        b.setMass(MassType.FIXED_ANGULAR_VELOCITY);
-//        b.getTransform().setTranslation(position.getX(), position.getY());
-//        b.setBullet(false);
-//        world.addBody(b);
         return b;
     }
 

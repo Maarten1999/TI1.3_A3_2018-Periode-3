@@ -1,48 +1,75 @@
 package agenda.gui;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.util.Hashtable;
 
 class ToolPanel extends JPanel {
 
-    private SimulatorPanel simulatorPanel;
+    private SimulatorTab simulatorTab;
+    private JSlider timeSlider;
+    private int currentSliderLimit;
 
-
-    ToolPanel(SimulatorPanel simulatorPanel) {
-        this.simulatorPanel = simulatorPanel;
-
+    ToolPanel(SimulatorTab simulatorTab) {
+        this.simulatorTab = simulatorTab;
 
         JLabel timeLabel = new JLabel(ScheduleTab.START_HOUR + ":00", JLabel.CENTER);
-        JLabel visitorLabel = new JLabel("0", JLabel.CENTER);
 
-        JSlider visitorSlider = new JSlider(0, 500, 0);
-        JSlider timeSlider = new JSlider(ScheduleTab.START_HOUR * 2, ScheduleTab.END_HOUR * 2, ScheduleTab.START_HOUR * 2);
+        JSlider visitorSlider = new JSlider(0, 500, 10);
+        JLabel visitorLabel = new JLabel(visitorSlider.getValue() + "", JLabel.CENTER);
+        timeSlider = new JSlider(ScheduleTab.START_HOUR * 2, ScheduleTab.END_HOUR * 2, ScheduleTab.START_HOUR * 2);
+        timeSlider.setEnabled(false);
 
         GridBagConstraints c = new GridBagConstraints();
         JButton togglePause = new JButton("Pause");
         togglePause.setEnabled(false);
         togglePause.addActionListener(e -> {
-            if (togglePause.getText().equals("Pause"))
+            if (togglePause.getText().equals("Pause")) {
                 togglePause.setText("Play");
-            else
+                this.simulatorTab.runTimer(false);
+            } else {
                 togglePause.setText("Pause");
+                this.simulatorTab.runTimer(true);
+            }
         });
+
         JButton stopButton = new JButton("Start");
         stopButton.addActionListener(e -> {
             if (stopButton.getText().equals("Stop")) {
                 stopButton.setText("Start");
                 visitorSlider.setEnabled(true);
+                timeSlider.setEnabled(false);
                 togglePause.setEnabled(false);
+
+                timeSlider.setValue(timeSlider.getMinimum());
+                timeLabel.setText(calculateTime(timeSlider.getValue()));
+
+                this.simulatorTab.clear();
             } else {
                 stopButton.setText("Stop");
                 visitorSlider.setEnabled(false);
+                timeSlider.setEnabled(true);
                 togglePause.setEnabled(true);
+
+                this.simulatorTab.init(visitorSlider.getValue());
             }
         });
 
+        timeSlider.addChangeListener((ChangeEvent e) -> {
+            if(timeSlider.getValueIsAdjusting()){
+                simulatorTab.runTimer(false);
+            }
+            timeLabel.setText(calculateTime(timeSlider.getValue()));
+            if (timeSlider.getValue() > currentSliderLimit) {
+                timeSlider.setValue(currentSliderLimit);
+            }
+            else if (!timeSlider.getValueIsAdjusting() && timeSlider.getValue() <= currentSliderLimit) {
+                simulatorTab.setToTime(timeSlider.getValue());
+                simulatorTab.runTimer(true);
+            }
 
-        timeSlider.addChangeListener(e -> timeLabel.setText(calculateTime(timeSlider.getValue())));
+        });
         timeSlider.setMinorTickSpacing(1);
         timeSlider.setMajorTickSpacing(2);
         timeSlider.setPaintTicks(true);
@@ -61,10 +88,8 @@ class ToolPanel extends JPanel {
         visitorSlider.setPaintTicks(true);
         visitorSlider.setPaintLabels(true);
 
-
         JLabel timeSliderLabel = new JLabel("tijd: ");
         JLabel visitorSliderLabel = new JLabel("aantal bezoekers: ");
-
 
         Box mainBox = Box.createVerticalBox();
 
@@ -91,13 +116,15 @@ class ToolPanel extends JPanel {
         box3.add(visitorLabel);
         mainBox.add(box3);
 
-
         timeSliderLabel.setPreferredSize(visitorSliderLabel.getPreferredSize());
         visitorLabel.setPreferredSize(timeLabel.getPreferredSize());
 
         add(mainBox);
+    }
 
-
+    public void setSlider(int value) {
+        currentSliderLimit = value;
+        timeSlider.setValue(value);
     }
 
     private String calculateTime(int sliderValue) {

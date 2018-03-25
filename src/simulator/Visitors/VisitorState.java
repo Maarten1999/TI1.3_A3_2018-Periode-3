@@ -18,6 +18,5 @@ public class VisitorState {
 
     public VisitorState(int time, boolean isActive, Point2D position, double foodlevel, double bathroomlevel, String currentTarget, Target containingTarget, Visitor visitor){
         this.time = time;
-
     }
 }
