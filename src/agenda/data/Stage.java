@@ -1,6 +1,6 @@
 package agenda.data;
 
-import simulator.Visitor;
+import simulator.Visitors.Visitor;
 import simulator.map.Target;
 
 import java.awt.*;
@@ -14,9 +14,11 @@ public class Stage extends Target implements Serializable {
     private int capacity;
     private Point entrance;
     private Point exit;
+    private Rectangle rectangle;
 
-    public Stage(String name, int capacity, Point entrance, Point exit) {
+    public Stage(String name, Rectangle rectangle, int capacity, Point entrance, Point exit) {
         super(name, entrance);//test
+        this.rectangle = rectangle;
         this.name = name;
         this.capacity = capacity;
         cap = capacity;
@@ -30,6 +32,18 @@ public class Stage extends Target implements Serializable {
 
     @Override
     public void update(float deltatimeFloat){
+
+    }
+
+    public void Draw(Graphics2D g2d){
+        if(visitors == null)
+            System.out.println("lame");
+
+            for (Visitor v : visitors) {
+                int x = (int) (rectangle.getX() + (Math.random() * rectangle.width));
+                int y = (int) (rectangle.getY() + (Math.random() * rectangle.height));
+                g2d.drawImage(v.image, null, x, y);
+            }
 
     }
 

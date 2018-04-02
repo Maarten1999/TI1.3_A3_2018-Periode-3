@@ -35,7 +35,7 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
         this.schedule = schedule;
         setLayout(new BorderLayout());
         visitorManager = new VisitorManager();
-        simulatorPanel = new SimulatorPanel(this, visitorManager);
+        simulatorPanel = new SimulatorPanel(this, visitorManager, this.schedule);
         toolPanel = new ToolPanel(this);
         add(simulatorPanel, BorderLayout.CENTER);
         add(toolPanel, BorderLayout.EAST);
@@ -43,6 +43,10 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
         initTimer();
     }
 
+    public void setSchedule(Schedule schedule){
+        this.schedule = schedule;
+        simulatorPanel.setSchedule(schedule);
+    }
 
     public void initTimer() {
         timer = new Timer(1, this);
@@ -57,7 +61,7 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
             timer.stop();
     }
 
-    double i = 0;
+    float time = 0;
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -72,6 +76,8 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
         if (deltaTimeFloat > 1)
             deltaTimeFloat = 1;
 
+        time += 0.2 * deltaTimeFloat;
+
         this.visitorManager.update(deltaTimeFloat);
 
         PhysicsWorld.getInstance().update(deltaTimeFloat);
@@ -82,10 +88,12 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
     private void checkForTimeSlotChange() {
         int newTimeSlot = calculateTimeSlot();
 
+        //checkForPerformances(timeValue);
+
         if (newTimeSlot > timeValue) {
+            System.out.println(getTimeSlot());
             System.out.println("changed timeslot from " + timeValue + " to " + newTimeSlot);
             timeValue = newTimeSlot;
-            checkForPerformances(timeValue);
             VisitorStateManager.getInstance().saveState(timeValue, visitorManager.getVisitorList());
             loadState = false;
             toolPanel.setSlider(newTimeSlot);
@@ -120,17 +128,27 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
             int done = 0;
 
             if(performances.size() > 0) {
+                Performance lastp = null;
                 for (Performance p : performances) {
                     float numOfVisitors = ((float) p.getPopularity() / (float) popularity);
-                    //check += " " + p.getName() + " " + numOfVisitors + "%";
+
+                    check += " " + p.getName() + " " + numOfVisitors + "%";
 
                     int vis = (int) ((float) amountOfVisitors * numOfVisitors);
+
+                    //System.out.println(" " + p.getName() + " " + numOfVisitors + "%" + " " + vis);
 
                     for (int i = done; i < vis + done; i++) {
                         visitors.get(i).setTarget(p.getStage().getName());
                     }
-
+                    lastp = p;
+                    done = vis;
                 }
+
+                if(lastp != null)
+                    for(int i = done; i < amountOfVisitors; i++) {
+                        visitors.get(i).setTarget(lastp.getStage().getName());
+                    }
             }
             else{
                 for(Visitor v: visitors){
@@ -145,11 +163,19 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
     }
 
     private int calculateTimeSlot() {
-        return (int) (ellapsedTime / 1e9 / 6) + ScheduleTab.START_HOUR * 2;
+        return (int) (ellapsedTime / 1e9 / 3) + ScheduleTab.START_HOUR * 2;
     }
 
     private void calculateEllapsedTime(int timeSlot) {
-        ellapsedTime = (int) ((timeSlot - ScheduleTab.START_HOUR * 2) * 1e9 * 6);
+        ellapsedTime = (int) ((timeSlot - ScheduleTab.START_HOUR * 2) * 1e9 * 3);
+    }
+
+    private int getTimeSlot(){
+        return (int)time + (ScheduleTab.START_HOUR * 2);
+    }
+
+    private float getTimeSlotF(){
+        return time + (ScheduleTab.START_HOUR * 2);
     }
 
     @Override

@@ -79,8 +79,8 @@ public class TiledMap {
                             case "Stage":
                                 Point entrancePointStage = new Point(target.getJsonObject("properties").getInt("EntranceX"), target.getJsonObject("properties").getInt("EntranceY"));
                                 Point exitPointStage = new Point(target.getJsonObject("properties").getInt("ExitX"), target.getJsonObject("properties").getInt("ExitY"));
-
-                                Stage stage = new Stage(name, target.getJsonObject("properties").getInt("capacity"), entrancePointStage, exitPointStage);
+                                Rectangle r = new Rectangle(target.getInt("x"), target.getInt("y"), target.getInt("width"), target.getInt("height"));
+                                Stage stage = new Stage(name, r, target.getJsonObject("properties").getInt("capacity"), entrancePointStage, exitPointStage);
 
                                 stages.add(stage);
                                 targets.add(stage);

@@ -1,5 +1,7 @@
 package agenda.gui;
 
+import agenda.data.Schedule;
+import agenda.data.Stage;
 import simulator.Camera;
 import simulator.Physics.PhysicsWorld;
 import simulator.Train;
@@ -33,7 +35,10 @@ public class SimulatorPanel extends JPanel implements MouseListener, MouseMotion
 
     private boolean drawDebug;
 
-    SimulatorPanel(SimulatorTab simulatorTab, VisitorManager visitorManager) {
+    private Schedule schedule;
+
+    SimulatorPanel(SimulatorTab simulatorTab, VisitorManager visitorManager, Schedule schedule) {
+        this.schedule = schedule;
         map = new TiledMap(getClass().getResourceAsStream("\\..\\..\\maps\\festivalMap.json"));
         PhysicsWorld.initialize(new Point(map.getWidth(), map.getHeight()));
         this.visitorManager = visitorManager;
@@ -58,6 +63,10 @@ public class SimulatorPanel extends JPanel implements MouseListener, MouseMotion
         camera.zoom(0.1);
     }
 
+    public void setSchedule(Schedule schedule){
+        this.schedule = schedule;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -80,6 +89,10 @@ public class SimulatorPanel extends JPanel implements MouseListener, MouseMotion
         if(pathCoord != null) {
             g2d.setColor(Color.cyan);
             g2d.drawRect((int)pathCoord.getX() * 32, (int)pathCoord.getY() * 32, 32, 32);
+        }
+
+        for(Stage s: schedule.getStages()){
+            s.Draw(g2d);
         }
 
         g2d.setTransform(prevTrans);

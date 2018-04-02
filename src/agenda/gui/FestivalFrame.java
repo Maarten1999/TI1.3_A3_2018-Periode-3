@@ -71,6 +71,10 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
         requestFocus();
     }
 
+    private void TestSchedual(){
+
+    }
+
     private void addKeyBoardBindings() {
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {

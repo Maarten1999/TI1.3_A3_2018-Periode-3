@@ -22,7 +22,7 @@ public class Visitor {
     private double angle;
     private double movementAngle;
     private double speed;
-    private BufferedImage image;
+    public BufferedImage image;
     private Body body;
 
     private PathMap map;
@@ -74,7 +74,7 @@ public class Visitor {
     }
 
     public void setTarget(String targetName){
-        System.out.println(targetName);
+        //System.out.println(targetName);
         entertainmentTarget = targetName;
         map = PathFinding.instance().getPathMap(targetName);
 

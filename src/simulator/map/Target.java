@@ -4,6 +4,7 @@ import simulator.Visitors.Visitor;
 import simulator.pathfinding.PathFinding;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
