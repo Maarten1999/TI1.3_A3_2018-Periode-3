@@ -92,8 +92,14 @@ public class SimulatorPanel extends JPanel implements MouseListener, MouseMotion
             g2d.drawRect((int)pathCoord.getX() * 32, (int)pathCoord.getY() * 32, 32, 32);
         }
 
-        for(Performance p: schedule.getPerformances()){
-            p.getStage().Draw(g2d);
+//        for(Performance p: schedule.getPerformances()){
+//            p.getStage().Draw(g2d);
+//        }
+
+        for(String s: TargetManager.instance().getStageList()){
+            Target t =TargetManager.instance().getTarget(s);
+            Stage stage = (Stage)t;
+            stage.Draw(g2d);
         }
 
         g2d.setTransform(prevTrans);
