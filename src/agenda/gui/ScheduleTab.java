@@ -288,22 +288,14 @@ class PerformanceBox {
     }
 
     public boolean containsMouse(Point2D point) {
-        System.out.println(box == null);
         return this.box.contains(point);
     }
 
     public boolean containsMouseOrNull(Point2D point) {
-        if(box == null){
-            //omdat threads
-            return  false;
-        }
-        return this.box.contains(point);
+        return box != null && this.box.contains(point);
     }
 
     public Performance getPerformance() {
         return performance;
     }
-
-
-
 }
