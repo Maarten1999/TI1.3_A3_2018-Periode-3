@@ -21,8 +21,8 @@ public class Performance implements Serializable {
     }
 
     public Performance() {
-    }
 
+    }
 
     public String getName() {
         return name;
@@ -66,5 +66,13 @@ public class Performance implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getPopularity(){
+        int p = 0;
+        for(Artist a : artists) {
+            p += a.getPopularity();
+        }
+        return p;
     }
 }

@@ -56,6 +56,12 @@ public class TargetManager {
         return target;
     }
 
+    public void clear(){
+        for(Target t: targets){
+            t.clear();
+        }
+    }
+
     public HashSet<String> getBathroomList() {
         return bathroomList;
     }

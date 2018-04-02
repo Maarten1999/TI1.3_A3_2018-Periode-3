@@ -86,13 +86,16 @@ public class TiledMap {
                                 targets.add(stage);
                                 break;
                             case "Gate":
-                                int max = (target.getJsonObject("properties").getInt("EndTileX") - target.getJsonObject("properties").getInt("StartTileX")) / 2;
-                                for (int j = 0; j < max; j++) {
-                                    Point entrancePoint = new Point(target.getJsonObject("properties").getInt("StartTileX") + j, target.getJsonObject("properties").getInt("Y"));
-                                    Point exitPoint = new Point(target.getJsonObject("properties").getInt("EndTileX") - j, target.getJsonObject("properties").getInt("Y"));
-                                    targets.add(new Gate("Entrance" + (j + 1), entrancePoint));
-                                    targets.add(new Gate("Exit" + (j + 1), exitPoint));
-                                }
+//                                int max = (target.getJsonObject("properties").getInt("EndTileX") - target.getJsonObject("properties").getInt("StartTileX")) / 2;
+//                                for (int j = 0; j < max; j++) {
+//                                    Point entrancePoint = new Point(target.getJsonObject("properties").getInt("StartTileX") + j, target.getJsonObject("properties").getInt("Y"));
+//                                    Point exitPoint = new Point(target.getJsonObject("properties").getInt("EndTileX") - j, target.getJsonObject("properties").getInt("Y"));
+//                                    targets.add(new Gate("Entrance" + (j + 1), entrancePoint));
+//                                    targets.add(new Gate("Exit" + (j + 1), exitPoint));
+//                                }
+//                                break;
+                                Point gatePoint = new Point(target.getJsonObject("properties").getInt("StartTileX") + 4, target.getJsonObject("properties").getInt("Y"));
+                                targets.add(new Gate("Gate", gatePoint));
                                 break;
                             case "toilet":
                                 Point toiletPoint = new Point(target.getJsonObject("properties").getInt("tileX"), target.getJsonObject("properties").getInt("tileY"));

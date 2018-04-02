@@ -40,7 +40,9 @@ public class Visitor {
     private String entertainmentTarget;
     private String serviceTarget;
 
-    private Target currentTarget;
+    private Target containingTarget;
+
+    private boolean eventStop;
 
     public Visitor(BufferedImage image){
         this.image = image;
@@ -49,13 +51,21 @@ public class Visitor {
         position = new Point2D.Double(0, 0);
         previousPosition = new Point2D.Double(0, 0);
         entertainmentTarget = new Point2D.Double(0, 0).toString();
+
+        foodLevel = 60 + Math.random() * 80;
+        foodFactor = Math.random() * 2;
+
+        bathroomLevel = Math.random() * 100;
+        bathroomFactor = Math.random() * 2;
+
         isVisitorActive = false;
 
-        foodLevel = 100 + Math.random() * 100;
-        foodFactor = Math.random();
+        containingTarget = TargetManager.instance().getTarget("Gate");
+        containingTarget.addVisitor(this);
+    }
 
-        bathroomLevel = Math.random() * 200;
-        bathroomFactor = Math.random();
+    public void stop(){
+        eventStop = true;
     }
 
     public void setTarget(Point2D newTarget){
@@ -64,21 +74,55 @@ public class Visitor {
     }
 
     public void setTarget(String targetName){
+        System.out.println(targetName);
         entertainmentTarget = targetName;
         map = PathFinding.instance().getPathMap(targetName);
+
+        if(containingTarget == null)
+            return;
+
+        if(!containingTarget.getName().equals(entertainmentTarget) && !containingTarget.getName().equals("Gate")) {
+            containingTarget.removeVisitor(this);
+            containingTarget = null;
+        }
     }
 
     public void update(float deltatimeFloat){
-        updateServices(deltatimeFloat);
+        if(!eventStop)
+            updateServices(deltatimeFloat);
         updateMovement();
-        //example
-        //if(tijd && alsOpslaan)
-        //  Timeline.instance().addVisitorState(GetState());
     }
 
-    ///public VisitorState GetState();
+    //return a state
+    public VisitorState getState(){
+        return new VisitorState(isVisitorActive, position, foodLevel, bathroomLevel, inNeedOfService, serviceTarget, entertainmentTarget, containingTarget, this);
+    }
 
-    //public void SetState();
+    //set a state
+    public void setState(VisitorState state){
+        //remove body if we have one
+        if(body != null)
+            onRemoval();
+
+        isVisitorActive = state.getIsActive();
+        position = state.getPosition();
+        foodLevel = state.getFoodlevel();
+        bathroomLevel = state.getBathroomlevel();
+        inNeedOfService = state.getIsInNeedOfService();
+        serviceTarget = state.getServiceTarget();
+        entertainmentTarget = state.getEntertainmentTargetTarget();
+        containingTarget = state.getContainingTarget();
+
+        eventStop = false;
+
+        //if are outside an target create our body else add to target
+        if(containingTarget == null) {
+            onPlacement(position);
+        }
+        else {
+            containingTarget.addVisitor(this);
+        }
+    }
 
     private void updateServices(float deltatimeFloat){
         foodLevel -= foodFactor * deltatimeFloat;
@@ -113,49 +157,57 @@ public class Visitor {
 
                 serviceTarget = currentSelection;
                 map = PathFinding.instance().getPathMap(serviceTarget);
+                if(containingTarget != null) {
+                    containingTarget.removeVisitor(this);
+                    containingTarget = null;
+                }
                 inNeedOfService = true;
             }
         }
-//        else if(foodLevel < 0) {
-//
-//
-//            HashSet<String> targets = TargetManager.instance().getStoreList();
-//            if(!targets.isEmpty()) {
-//                int distance = 1900000000;
-//                String currentSelection = targets.iterator().next();
-//
-//                for (String t : targets)
-//                {
-//                    PathMap pm = PathFinding.instance().getPathMap(t);
-//
-//                    Point[] p = pm.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32));
-//
-//                    if(p == null)
-//                        p = pm.getRoute(new Point((int)previousPosition.getX() / 32, (int)previousPosition.getY() / 32));
-//
-//                    if(p == null)
-//                        continue;
-//
-//                    int length = p.length;
-//
-//                    if( length < distance) {
-//                        currentSelection = t;
-//                        distance = length;
-//                    }
-//                }
-//
-//                serviceTarget = currentSelection;
-//                map = PathFinding.instance().getPathMap(serviceTarget);
-//                inNeedOfService = false;
-//            }
-//        }
+        else if(foodLevel < 0) {
+
+
+            HashSet<String> targets = TargetManager.instance().getStoreList();
+            if(!targets.isEmpty()) {
+                int distance = 1900000000;
+                String currentSelection = targets.iterator().next();
+
+                for (String t : targets)
+                {
+                    PathMap pm = PathFinding.instance().getPathMap(t);
+
+                    Point[] p = pm.getRoute(new Point((int)position.getX() / 32, (int)position.getY() / 32));
+
+                    if(p == null)
+                        p = pm.getRoute(new Point((int)previousPosition.getX() / 32, (int)previousPosition.getY() / 32));
+
+                    if(p == null)
+                        continue;
+
+                    int length = p.length;
+
+                    if( length < distance) {
+                        currentSelection = t;
+                        distance = length;
+                    }
+                }
+
+                serviceTarget = currentSelection;
+                map = PathFinding.instance().getPathMap(serviceTarget);
+                if(containingTarget != null) {
+                    containingTarget.removeVisitor(this);
+                    containingTarget = null;
+                }
+                inNeedOfService = true;
+            }
+        }
 
     }
 
     private void updateMovement(){
 
         //no need to update;
-        if(!isVisitorActive)
+        if(!isVisitorActive || body == null)
             return;
 
         //updatebody position
@@ -181,7 +233,14 @@ public class Visitor {
                 route = p;
             else if (p.length <= 1){
                 if(inNeedOfService){
-                    TargetManager.instance().getTarget(serviceTarget).addVisitor(this);
+                    containingTarget = TargetManager.instance().getTarget(serviceTarget);
+                    if(containingTarget != null)
+                        containingTarget.addVisitor(this);
+                    return;
+                }else{
+                    containingTarget = TargetManager.instance().getTarget(entertainmentTarget);
+                    if(containingTarget != null)
+                        containingTarget.addVisitor(this);
                     return;
                 }
 
@@ -201,7 +260,7 @@ public class Visitor {
                 (route[1].getY() * 32) + 16 - position.getY()
         );
 
-        movementAngle = Math.atan2(diffForMovement.getY(), diffForMovement.getX());
+        movementAngle = Math.atan2(diffForMovement.getY(), diffForMovement.getX()) + Math.toRadians(Math.random() * 26);
 
         double x = speed * Math.cos(movementAngle);
         double y = speed * Math.sin(movementAngle);
@@ -211,6 +270,9 @@ public class Visitor {
     }
 
     public void drawDebug(Graphics2D graphics2D) {
+
+        if(!isVisitorActive || body == null)
+            return;
 
 //        if(map != null)
 //            map.drawMap(graphics2D);
@@ -236,7 +298,7 @@ public class Visitor {
     }
 
     public void draw(Graphics2D graphics2D){
-        if(!isVisitorActive)
+        if(!isVisitorActive || body == null)
             return;
 
         AffineTransform tx = new AffineTransform();
@@ -252,6 +314,7 @@ public class Visitor {
         previousPosition = placementPosition;
         body = PhysicsWorld.getInstance().getBody(placementPosition);
         isVisitorActive = true;
+        containingTarget = null;
     }
 
     public void onRemoval(){

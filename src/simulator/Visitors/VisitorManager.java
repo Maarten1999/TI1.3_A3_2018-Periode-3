@@ -57,4 +57,11 @@ public class VisitorManager {
         v.onRemoval();
         visitorList.remove(v);
     }
+
+    public void Clear(){
+        for(Visitor v: visitorList){
+            v.onRemoval();
+        }
+        visitorList.clear();
+    }
 }

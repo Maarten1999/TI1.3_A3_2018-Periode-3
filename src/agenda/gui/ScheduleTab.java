@@ -9,13 +9,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-public class ScheduleTab extends JPanel implements MouseListener {
+public class ScheduleTab extends JPanel implements MouseListener, MouseMotionListener {
 
     private Schedule schedule;
     private ArrayList<PerformanceBox> performanceBoxes;
@@ -28,14 +29,15 @@ public class ScheduleTab extends JPanel implements MouseListener {
         //New button
         JButton newButton = new JButton("New Performance");
         newButton.addActionListener(e -> {
-            if(!areThereArtists()){
-               JOptionPane.showMessageDialog(null, "There are no artists to add to the performance!", "Error", JOptionPane.ERROR_MESSAGE);
+            if (!areThereArtists()) {
+                JOptionPane.showMessageDialog(null, "There are no artists to add to the performance!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             new PopupWindow(this.schedule);
         });
 
         addMouseListener(this);
+        addMouseMotionListener(this);
         add(panel, BorderLayout.SOUTH);
         panel.add(newButton);
 
@@ -165,13 +167,13 @@ public class ScheduleTab extends JPanel implements MouseListener {
         repaint();
     }
 
-    private boolean areThereArtists(){
+    private boolean areThereArtists() {
         boolean available = false;
-        if(schedule.getArtists().size() == 0)
+        if (schedule.getArtists().size() == 0)
             available = false;
-        else{
-            for(Artist artist : schedule.getArtists()){
-                if(!artist.getName().isEmpty())
+        else {
+            for (Artist artist : schedule.getArtists()) {
+                if (!artist.getName().isEmpty())
                     available = true;
             }
         }
@@ -188,13 +190,37 @@ public class ScheduleTab extends JPanel implements MouseListener {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+    }
+
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+    }
+
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
+
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        setToolTipText(null);
+        for (PerformanceBox performanceBox : this.performanceBoxes) {
+            if (performanceBox.containsMouseOrNull(e.getPoint())) {
+                setToolTipText(performanceBox.getPerformance().getName());
+                break;
+            }
+        }
+    }
+
 }
 
 class PerformanceBox {
@@ -236,15 +262,15 @@ class PerformanceBox {
         // Draw strings
         g2d.setClip(this.box);
         g2d.setColor(Color.BLACK);
-        ScheduleTab.font = ScheduleTab.font.deriveFont((float)16);
+        ScheduleTab.font = ScheduleTab.font.deriveFont((float) 16);
         String nameString = this.performance.getName();
         nameString = shorten(nameString);
         ScheduleTab.drawText(g2d, nameString, x + ScheduleTab.STAGE_BAR_WIDTH / 2, y + 20, true);
 
         String artistString = "";
-        for(int i = 0; i < this.performance.getArtists().size(); i++){
+        for (int i = 0; i < this.performance.getArtists().size(); i++) {
             artistString += this.performance.getArtists().get(i).getName();
-            if(i != this.performance.getArtists().size() - 1){
+            if (i != this.performance.getArtists().size() - 1) {
                 artistString += ", ";
             }
         }
@@ -269,6 +295,10 @@ class PerformanceBox {
 
     public boolean containsMouse(Point2D point) {
         return this.box.contains(point);
+    }
+
+    public boolean containsMouseOrNull(Point2D point) {
+        return box != null && this.box.contains(point);
     }
 
     public Performance getPerformance() {

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Stage extends Target implements Serializable {
+
     private String name;
     private int capacity;
     private Point entrance;
@@ -18,6 +19,7 @@ public class Stage extends Target implements Serializable {
         super(name, entrance);//test
         this.name = name;
         this.capacity = capacity;
+        cap = capacity;
         this.entrance = entrance;
         this.exit = exit;
     }
@@ -33,7 +35,10 @@ public class Stage extends Target implements Serializable {
 
     @Override
     public void removeVisitor(simulator.Visitors.Visitor visitor) {
-
+        if(visitors.contains(visitor)) {
+            visitors.remove(visitor);
+            visitor.onPlacement(new Point(exit.x * 32 + 16, exit.y * 32 + 16));
+        }
     }
 
 
@@ -42,6 +47,7 @@ public class Stage extends Target implements Serializable {
     }
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+        cap = capacity;
     }
     public int getCapacity() {
         return capacity;
