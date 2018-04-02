@@ -33,7 +33,7 @@ public class Visitor {
         position = new Point2D.Double(this.size / 2 + Math.random() * (width - this.size),
                 this.size / 2 + Math.random() * (height - this.size));
         angle = Math.random() * 2 * Math.PI;
-        speed = 3 + 4 * Math.random();
+        speed = 6 + 7 * Math.random();
         this.width = width;
         this.height = height;
     }

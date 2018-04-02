@@ -46,7 +46,7 @@ public class Visitor {
 
     public Visitor(BufferedImage image){
         this.image = image;
-        speed = 75 + 30 * Math.random();
+        speed = 110 + 60 * Math.random();
         angle = 0;
         position = new Point2D.Double(0, 0);
         previousPosition = new Point2D.Double(0, 0);
@@ -75,6 +75,10 @@ public class Visitor {
 
     public void setTarget(String targetName){
         //System.out.println(targetName);
+
+        if(targetName.equals(entertainmentTarget))
+            return;
+
         entertainmentTarget = targetName;
         map = PathFinding.instance().getPathMap(targetName);
 

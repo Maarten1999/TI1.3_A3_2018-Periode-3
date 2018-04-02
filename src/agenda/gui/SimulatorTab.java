@@ -25,8 +25,6 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
     private SimulatorPanel simulatorPanel;
     private ToolPanel toolPanel;
     private int amountOfVisitors = 0;
-    private long beginTime = 0;
-    private long ellapsedTime;
     private long lastTime;
     private int timeValue = 0;
     private boolean loadState;
@@ -67,7 +65,6 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
     public void actionPerformed(ActionEvent e) {
         long currentTime = System.nanoTime();
         long deltaTime = currentTime - lastTime;
-        ellapsedTime += deltaTime;
         checkForTimeSlotChange();
 
         float deltaTimeFloat = (float) ((double) deltaTime / 1000000000.0);
@@ -86,9 +83,9 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
     }
 
     private void checkForTimeSlotChange() {
-        int newTimeSlot = calculateTimeSlot();
+        int newTimeSlot = getTimeSlot();
 
-        //checkForPerformances(timeValue);
+        checkForPerformances();
 
         if (newTimeSlot > timeValue) {
             System.out.println(getTimeSlot());
@@ -102,8 +99,8 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
 
     String check = "none";
 
-    private void checkForPerformances(int timeslot){
-        LocalTime lt = LocalTime.of((timeslot * 30) / 60, (timeslot * 30) % 60, 0, 0);
+    private void checkForPerformances(){
+        LocalTime lt = LocalTime.of(((getTimeSlot() * 30) / 60) % 24, (int)((getTimeSlotF() * 30) % 60), 0, 0);
         ArrayList<Performance> performances = new ArrayList<>();
 
         int popularity = 0;
@@ -142,7 +139,7 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
                         visitors.get(i).setTarget(p.getStage().getName());
                     }
                     lastp = p;
-                    done = vis;
+                    done += vis;
                 }
 
                 if(lastp != null)
@@ -162,13 +159,13 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
 
     }
 
-    private int calculateTimeSlot() {
-        return (int) (ellapsedTime / 1e9 / 3) + ScheduleTab.START_HOUR * 2;
-    }
-
-    private void calculateEllapsedTime(int timeSlot) {
-        ellapsedTime = (int) ((timeSlot - ScheduleTab.START_HOUR * 2) * 1e9 * 3);
-    }
+//    private int calculateTimeSlot() {
+//        return (int) (ellapsedTime / 1e9 / 3) + ScheduleTab.START_HOUR * 2;
+//    }
+//
+//    private void calculateEllapsedTime(int timeSlot) {
+//        ellapsedTime = (int) ((timeSlot - ScheduleTab.START_HOUR * 2) * 1e9 * 3);
+//    }
 
     private int getTimeSlot(){
         return (int)time + (ScheduleTab.START_HOUR * 2);
@@ -207,8 +204,8 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
 
     public void init(int amountOfVisitors) {
         this.amountOfVisitors = amountOfVisitors;
-        this.ellapsedTime = lastTime = timeValue = 0;
-
+        lastTime = timeValue = 0;
+        //this.ellapsedTime =
         for(int i = 0; i < amountOfVisitors; i++){
             visitorManager.createVisitor();
         }
@@ -222,9 +219,10 @@ public class SimulatorTab extends JPanel implements ActionListener, KeyListener 
             TargetManager.instance().clear();
             VisitorStateManager.getInstance().loadState(value);
         }
-        calculateEllapsedTime(value);
+        //calculateEllapsedTime(value);
         lastTime = System.nanoTime();
         timeValue = value;
+        time = value - (ScheduleTab.START_HOUR * 2);
         loadState = true;
     }
 }

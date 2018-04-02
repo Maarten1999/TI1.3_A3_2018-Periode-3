@@ -1,5 +1,6 @@
 package agenda.gui;
 
+import agenda.data.Performance;
 import agenda.data.Schedule;
 import agenda.data.Stage;
 import simulator.Camera;
@@ -91,8 +92,8 @@ public class SimulatorPanel extends JPanel implements MouseListener, MouseMotion
             g2d.drawRect((int)pathCoord.getX() * 32, (int)pathCoord.getY() * 32, 32, 32);
         }
 
-        for(Stage s: schedule.getStages()){
-            s.Draw(g2d);
+        for(Performance p: schedule.getPerformances()){
+            p.getStage().Draw(g2d);
         }
 
         g2d.setTransform(prevTrans);
