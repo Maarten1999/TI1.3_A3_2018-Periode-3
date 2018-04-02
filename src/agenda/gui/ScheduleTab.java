@@ -9,13 +9,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-public class ScheduleTab extends JPanel implements MouseListener {
+public class ScheduleTab extends JPanel implements MouseListener , MouseMotionListener {
 
     private Schedule schedule;
     private ArrayList<PerformanceBox> performanceBoxes;
@@ -29,13 +30,14 @@ public class ScheduleTab extends JPanel implements MouseListener {
         JButton newButton = new JButton("New Performance");
         newButton.addActionListener(e -> {
             if(!areThereArtists()){
-               JOptionPane.showMessageDialog(null, "There are no artists to add to the performance!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "There are no artists to add to the performance!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             new PopupWindow(this.schedule);
         });
 
         addMouseListener(this);
+        addMouseMotionListener(this);
         add(panel, BorderLayout.SOUTH);
         panel.add(newButton);
 
@@ -195,6 +197,24 @@ public class ScheduleTab extends JPanel implements MouseListener {
     public void mouseEntered(MouseEvent e) {}
     @Override
     public void mouseExited(MouseEvent e) {}
+
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        setToolTipText(null);
+        for (PerformanceBox performanceBox : this.performanceBoxes) {
+            if (performanceBox.containsMouseOrNull(e.getPoint())) {
+                setToolTipText(performanceBox.getPerformance().getName());
+                break;
+            }
+        }
+    }
+
 }
 
 class PerformanceBox {
@@ -268,10 +288,22 @@ class PerformanceBox {
     }
 
     public boolean containsMouse(Point2D point) {
+        System.out.println(box == null);
+        return this.box.contains(point);
+    }
+
+    public boolean containsMouseOrNull(Point2D point) {
+        if(box == null){
+            //omdat threads
+            return  false;
+        }
         return this.box.contains(point);
     }
 
     public Performance getPerformance() {
         return performance;
     }
+
+
+
 }

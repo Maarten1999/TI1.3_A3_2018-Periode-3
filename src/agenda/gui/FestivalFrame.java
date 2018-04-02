@@ -2,7 +2,6 @@ package agenda.gui;
 
 import agenda.data.Schedule;
 import agenda.data.Stage;
-import simulator.map.TiledMap;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -108,6 +107,7 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
             this.scheduleTab.refresh();
             this.artistTab.refresh();
             this.performanceTab.refresh();
+            setTitle("New Festival");
         });
 
         // Open
@@ -120,6 +120,8 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
             int returnVal = fileChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
+                File fileString = new File(fileChooser.getCurrentDirectory()+"\\"+selectedFile.getName());
+                System.out.println(fileString);
                 try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(selectedFile))) {
                     this.schedule.load( (Schedule) inputStream.readObject());
                     setTitle(selectedFile.getName());
@@ -142,7 +144,7 @@ public class FestivalFrame extends JFrame implements WindowFocusListener {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File selectedFile1 = fileChooser.getSelectedFile();
                 if(!selectedFile1.getAbsolutePath().endsWith(".ftv"))
-                    selectedFile1 = new File(selectedFile1.getName()+".ftv");
+                    selectedFile1 = new File(fileChooser.getCurrentDirectory()+"\\"+selectedFile1.getName()+".ftv");
                 schedule.setName(selectedFile1.getName());
                 try(ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(selectedFile1))){
                     outputStream.writeObject(schedule);

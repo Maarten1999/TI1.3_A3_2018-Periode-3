@@ -4,9 +4,10 @@ import simulator.Visitors.Visitor;
 import simulator.pathfinding.PathFinding;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Target {
+public abstract class Target implements Serializable {
     private String name;
     private Point targetPoint;
     protected int cap;
